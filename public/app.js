@@ -98,7 +98,10 @@ function introDraw(ms){
      line.el.style.webkitClipPath=cut;
    }
  }
- if(ms>=5000)document.body.classList.remove('invitation-locked');
+ if(ms>=5000){
+   document.body.classList.remove('invitation-locked');
+   $('intro').style.pointerEvents='none';
+ }
 }
 function openInvitation(){
  if(s.opened)return;
