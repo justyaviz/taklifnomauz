@@ -1,0 +1,69 @@
+/* TAKLIFLY — independent recreation of the original OQ SAROY demo.
+   The other nine commercial templates, especially the TUY BOB festival variant,
+   are deliberately unaffected. */
+body[data-template="oq-saroy-original"]{
+ --navy:#15192a;--cream:#f4e9ce;--gold:#b89246;--goldlight:#ecd9a6;
+ color:#f4e9ce;background:#15192a;
+}
+body[data-template="oq-saroy-original"] .mobile{
+ background:#15192a url('https://taklifnoma.imaantech.uz/assets/oqsaroy/fon.webp') center 844px/100% auto repeat-y;
+ box-shadow:0 0 55px #070812bb;
+}
+body[data-template="oq-saroy-original"] .hero{
+ background:#f3e9d2 url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp') center/cover no-repeat;
+}
+body[data-template="oq-saroy-original"] .hero-inside{padding-top:23.5svh}
+body[data-template="oq-saroy-original"] .names{font-family:'Parisienne','Great Vibes',cursive;color:#6b4f12}
+body[data-template="oq-saroy-original"] .names span:first-child{font-size:42.9px;line-height:1.05}
+body[data-template="oq-saroy-original"] .names span:last-child{font-size:54px;line-height:1.05}
+body[data-template="oq-saroy-original"] .names em{font-size:21.94px;color:#b89246}
+body[data-template="oq-saroy-original"] .eyebrow{color:#5a4416;font-size:10.55px}
+body[data-template="oq-saroy-original"] .date-text{font-family:'Cormorant Garamond',Georgia,serif;font-size:21px}
+body[data-template="oq-saroy-original"] .intro-label .orn{display:none}
+body[data-template="oq-saroy-original"] .section{
+ color:#f0e4c9;
+ padding-left:10%;padding-right:10%;
+ background:transparent;
+}
+body[data-template="oq-saroy-original"] .section h2{
+ color:#e8d4a1;
+ font:500 21.84px/1.2 'Cormorant Garamond',Georgia,serif;
+ text-transform:uppercase;
+ white-space:normal;
+}
+body[data-template="oq-saroy-original"] .welcome{min-height:546px;padding-top:110px;padding-bottom:59px}
+body[data-template="oq-saroy-original"] .calendar-section{min-height:654px;padding-top:106px;padding-bottom:47px}
+body[data-template="oq-saroy-original"] .schedule{min-height:540px;padding-top:105px;padding-bottom:40px}
+body[data-template="oq-saroy-original"] .location{min-height:713px;padding-top:106px;padding-bottom:35px}
+body[data-template="oq-saroy-original"] .wishes-section{display:block;min-height:706px;padding-top:105px;padding-bottom:36px}
+body[data-template="oq-saroy-original"] .count-section{min-height:344px;padding-top:106px;padding-bottom:24px}
+body[data-template="oq-saroy-original"] .final{min-height:530px;padding-top:104px;padding-bottom:140px}
+body[data-template="oq-saroy-original"] .wish-list{max-width:312px}
+body[data-template="oq-saroy-original"] .wish-card{
+ background:#fbf9f1;color:#534834;border-radius:9px;padding:10px 12px;
+ box-shadow:0 4px 15px #0004
+}
+body[data-template="oq-saroy-original"] .wish-card p{font:15px/1.35 'Cormorant Garamond',Georgia,serif;color:#51483b}
+body[data-template="oq-saroy-original"] .end-orn{display:none}
+body[data-template="oq-saroy-original"].with-motion .reveal,
+body[data-template="oq-saroy-original"].with-motion .reveal:not(.visible){
+ opacity:1;
+ transform:none;
+ transition:opacity .85s,transform .85s;
+}
+body[data-template="oq-saroy-original"].with-motion .reveal:not(.visible) .art{
+ opacity:.6;transform:translateY(8px);
+}
+body[data-template="oq-saroy-original"].with-motion .reveal.visible .art{
+ opacity:1;transform:none;
+}
+@media(min-width:478px){
+ body[data-template="oq-saroy-original"] .hero-inside{padding-top:198px}
+}
+@media(max-width:359px){
+ body[data-template="oq-saroy-original"] .hero-inside{padding-top:24svh}
+ body[data-template="oq-saroy-original"] .section{padding-left:8%;padding-right:8%}
+}
+@media(prefers-reduced-motion:reduce){
+ body[data-template="oq-saroy-original"] .art{opacity:1!important;transform:none!important}
+}
