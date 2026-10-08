@@ -67,7 +67,10 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
   if(!o)return say(chat,'Bu buyurtma sizga tegishli emas yoki topilmadi.');
   if(o.status==='pending_payment')return say(chat,'⌛ To‘lov hali tasdiqlanmagan. To‘lov tugmasini qayta olish uchun shablonni tanlang.',[[{text:'🎨 Shablonlar',callback_data:'catalog'}]]);
   const buttons=[];
-  if(o.status==='ready')buttons.push([{text:'🔗 Taklifnomani ochish',url:publicBase+'/i/'+o.slug}]);
+  if(o.status==='ready'){
+   buttons.push([{text:'🔗 Taklifnomani ochish',url:publicBase+'/i/'+o.slug}]);
+   buttons.push([{text:'💌 Mehmon taklif qilish',callback_data:'invite:'+o.id}]);
+  }
   buttons.push([{text:'✏️ Tahrirlash',callback_data:'edit:'+o.id}]);
   buttons.push([{text:'📦 Buyurtmalarim',callback_data:'orders'}]);
   return say(chat,(o.status==='ready'?'✅ Tayyor taklifnoma':'✍️ Taklifnomangiz to‘ldirilmoqda')+'\n\n'+(o.answers.groom||'Kuyov')+' & '+(o.answers.bride||'Kelin')+'\nShablon: '+o.template+'\nBuyurtma: '+o.id.slice(0,8),buttons);
@@ -273,9 +276,52 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
   if(result.error)return say(chat,'⚠️ '+result.error);
   await say(chat,'🎉 Taklifnomangiz tayyor!\n\n🤵 '+result.invitation.groom+'\n👰 '+result.invitation.bride+'\n\nHavolani mehmonlarga yuborishingiz mumkin.',[
    [{text:'🔗 Taklifnomani ochish',url:publicBase+'/i/'+result.order.slug}],
+   [{text:'💌 Mehmon taklif qilish',callback_data:'invite:'+id}],
    [{text:'✏️ O‘zgartirish',callback_data:'edit:'+id}],
    [{text:'📦 Buyurtmalarim',callback_data:'orders'}]
   ]);
+ }
+ async function askGuest(chat,user,id){
+  const order=await store.mutate(async()=>{
+   const list=await orders(),o=owned(list,user,id);
+   if(!o||o.status!=='ready'||!o.slug)return null;
+   for(const item of list)if(item.telegramUserId===user)item.guestMode=false;
+   o.guestMode=true;
+   await store.write('bot-orders.json',list);
+   return o;
+  });
+  if(!order)return say(chat,'Mehmon taklifini faqat tayyor taklifnomadan yuborish mumkin.');
+  return say(chat,'💌 Mehmon taklif qilish\n\nMehmonning ismini yuboring. Masalan: Sardor aka\n\nSizga shaxsiy nomi va taklifnoma havolasi kiritilgan, ulashishga tayyor post qaytaraman.',[
+   [{text:'🔙 Buyurtmaga qaytish',callback_data:'order:'+id}]
+  ]);
+ }
+ async function sendGuestPost(chat,user,name){
+  const guest=clean(name,81);
+  if(guest.length<2||guest.length>80)return say(chat,'Mehmon ismini 2–80 belgida yozing.');
+  const order=await store.mutate(async()=>{
+   const list=await orders();
+   const o=list.find(x=>x.telegramUserId===user&&x.status==='ready'&&x.guestMode&&x.slug);
+   if(!o)return null;
+   o.guestMode=false;
+   o.guestLinks=(o.guestLinks||[]).slice(-199);
+   if(o.guestLinks.some(x=>x.name===guest))o.guestLinks=o.guestLinks.filter(x=>x.name!==guest);
+   o.guestLinks.push({name:guest,createdAt:new Date().toISOString()});
+   await store.write('bot-orders.json',list);
+   return o;
+  });
+  if(!order)return false;
+  const a=order.answers||{};
+  const link=publicBase+'/i/'+encodeURIComponent(order.slug)+'?guest='+encodeURIComponent(guest);
+  const date=String(a.eventDate||'').split('-').reverse().join('.');
+  const letter='💌 TAKLIFLY | MAXSUS TAKLIFNOMA\n\n🌷 Hurmatli '+guest+'!\n\nSizni '+(a.groom||'Kuyov')+' va '+(a.bride||'Kelin')+'ning nikoh to‘yiga chin dildan taklif etamiz!\n\n📅 '+date+' · '+(a.eventTime||'')+'\n🏛 '+(a.venue||'')+'\n📍 '+(a.address||'')+'\n\nSizni oramizda ko‘rish biz uchun katta baxt! 🌸\n\n🔗 Shaxsiy taklifnomangiz:\n'+link;
+  const share='https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent('💌 Hurmatli '+guest+'!\n'+(a.groom||'')+' va '+(a.bride||'')+' to‘yiga taklif etamiz. 🎉');
+  await say(chat,'✅ Ulashishga tayyor taklif posti:\n\n'+letter,[
+   [{text:'📨 Telegramda ulashish',url:share}],
+   [{text:'🔗 Taklifnomani ochish',url:link}],
+   [{text:'💌 Yana mehmon taklif qilish',callback_data:'invite:'+order.id}],
+   [{text:'📦 Buyurtmaga qaytish',callback_data:'order:'+order.id}]
+  ]);
+  return true;
  }
  async function processUpdate(update){
   const callback=update.callback_query;
@@ -289,6 +335,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
    if(act==='view')return showTemplate(chat,value);
    if(act==='buy')return createOrder(chat,user,value);
    if(act==='order')return getOrder(chat,user,value);
+   if(act==='invite')return askGuest(chat,user,value);
    if(act==='continue'||act==='edit'){const o=await activate(user,value,'groom');return o?prompt(chat,o):say(chat,'Buyurtma topilmadi.')}
    if(act==='skip')return skip(user,chat,value);
    if(act==='back')return back(user,chat,value);
@@ -303,6 +350,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
   if(command==='/start')return welcome(chat);
   if(command==='/templates')return catalog(chat);
   if(command==='/orders')return myOrders(chat,user);
+  if(command==='/invite')return myOrders(chat,user);
   if(command==='/cancel'){
    await store.mutate(async()=>{const list=await orders();for(const o of list)if(o.telegramUserId===user)o.active=false;await store.write('bot-orders.json',list)});
    return say(chat,'To‘ldirish to‘xtatildi. Xaridingiz saqlangan. /orders orqali davom etishingiz mumkin.');
@@ -311,6 +359,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
   if(command==='/paysupport'||command==='/support'||command==='/help')
    return say(chat,'Yordam: '+(process.env.TELEGRAM_SUPPORT_USERNAME?'@'+process.env.TELEGRAM_SUPPORT_USERNAME.replace(/^@/,''):'Taklifnoma sotuvchisi bilan bog‘laning.')+'\nBuyurtmalar: /orders\nSavdo shartlari: /terms');
   if(command.startsWith('/'))return say(chat,'Menyuni ochish uchun /start ni bosing.');
+  if((await orders()).some(o=>o.telegramUserId===user&&o.guestMode&&o.status==='ready'))return sendGuestPost(chat,user,String(msg.text||''));
   return answerField(chat,user,msg);
  }
  async function webhook(req,res,url){
