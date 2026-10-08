@@ -18,3 +18,130 @@
 @media(min-width:600px){.mobile{box-shadow:0 0 55px #070812bb}.intro-bg{background-size:auto 100%}.section{padding-left:44px;padding-right:44px}}
 @media(max-width:359px){.section{padding-left:20px;padding-right:20px}.section h2{font-size:29px}.welcome .welcome-p{font-size:16px}.timeline>div{gap:13px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}.with-motion .reveal:not(.visible){opacity:1;transform:none}}
+
+
+/* OQ SAROY fidelity pass — independently reconstructed layout from measured rendered geometry. */
+:root{
+ --navy:#15192a;--cream:#f4e9ce;--gold:#b89246;--goldlight:#ecd9a6;--ink:#3a3122;
+}
+.mobile{background:#15192a url('https://taklifnoma.imaantech.uz/assets/oqsaroy/fon.webp') center 844px/100% auto repeat-y}
+.section{padding:59px 10%;color:#f0e4c9}
+.section:before{background:none}
+.section h2{
+ font:500 clamp(20px,5.6vw,25px)/1.2 var(--serif);
+ color:#e8d4a1;letter-spacing:.11em;margin:0 auto 2px;white-space:nowrap
+}
+.section .rule{height:20px;font-size:13px;margin:6px auto 14px}
+.section .rule:before,.section .rule:after{width:42px}
+.section .overline{display:none}
+.section .art{filter:drop-shadow(0 5px 10px #05071740);margin:0 auto 12px;height:auto;object-fit:contain}
+.section .letter,.section .clock,.section .book,.section .rings{width:132px;max-width:132px}
+.section .bell,.section .compass,.section .sand{width:55px;max-width:55px}
+.section .book{height:87px;object-fit:contain}
+.section .letter{height:47px}
+.section .clock{height:100px}
+.section .bell{height:113px}
+.section .compass{height:101px}
+.section .sand{height:112px}
+.section .rings{height:81px}
+.section .welcome-p{font:400 18px/1.55 var(--serif);color:#e6dccb}
+.welcome{min-height:546px;padding-top:110px;padding-bottom:42px}
+.welcome h2{font-size:clamp(20px,5.6vw,22px)}
+.welcome .welcome-p{margin:0 auto}
+.welcome .welcome-p:first-of-type{font-size:19px;max-width:272px;line-height:1.5}
+.welcome .welcome-p:nth-of-type(2){margin-top:12px;font-size:17.9px;max-width:312px;line-height:1.5}
+.signature-script{font:400 34px/1.08 var(--script);margin:12px 0 4px}
+.signature{font-size:10.5px;letter-spacing:.04em}
+/* Original hides the optional memories section if no couple photos were provided. */
+.memories{display:none}
+.calendar-section{min-height:654px;padding-top:106px;padding-bottom:47px}
+.calendar-section .art{margin-bottom:12px}
+.cal{margin:14px auto 0;max-width:310px}
+.cal-title{font:28px/1.5 var(--script);margin-bottom:14px}
+.cal-grid{gap:5px 2px}
+.cal-grid>span{min-height:26px;font-size:11px}
+.cal-grid>.current{height:30px;width:30px}
+.subtime{margin-top:20px;font-size:10px}
+.schedule{min-height:540px;padding-top:105px;padding-bottom:40px}
+.schedule .timeline{margin:10px auto 0}
+.timeline>div{padding:8px 0;gap:15px}
+.timeline time{font:600 16px/1.2 var(--serif)}
+.timeline span{font:16px/1.2 var(--serif)}
+.location{min-height:713px;padding-top:106px;padding-bottom:42px}
+.location .venue{font:30px/1.35 var(--script);margin:14px auto 0}
+.location p{font:16px/1.4 var(--serif);margin:5px 0 12px}
+.map-placeholder{min-height:184px;margin:20px auto 14px;width:100%;border:6px solid #f5eddf;border-radius:10px}
+.map-placeholder span,.map-placeholder small{display:none}
+.location .btn{width:175px;min-height:43px;font-size:11px;padding:12px 16px;margin:10px auto}
+.location .btn.light{width:158px;min-height:44px}
+.wishes-section{min-height:706px;padding-top:105px;padding-bottom:36px}
+.wish-list{gap:10px;margin:14px auto;max-width:312px}
+.wish-card{padding:10px 12px;border-radius:9px}
+.wish-card p{font:15px/1.35 var(--serif);margin:4px 0}
+.wish-head{font-size:12px}
+.wish-actions{margin-top:5px}
+.wish-form{gap:10px}
+.wish-form label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.wish-form input,.wish-form textarea{border-radius:8px;padding:12px 14px;font-size:16px}
+.wish-form input{height:45px}
+.wish-form textarea{height:70px;resize:vertical}
+.wish-form .btn{min-height:36px;width:132px;margin:8px auto 0;padding:8px;font-size:11px}
+.count-section{min-height:344px;padding-top:106px;padding-bottom:33px}
+.count-section .rule{display:none}
+.count-section .overline{display:block;color:#e9d8af;font-size:10.5px;margin:0 0 12px}
+.counts{margin:10px auto 0;gap:5px}
+.counts>div{padding:7px 1px;gap:0;min-height:61px}
+.counts strong{font-size:25px;line-height:1.2}
+.counts small{font-size:9px}
+.final{min-height:530px;padding-top:104px;padding-bottom:140px}
+.final .rule{display:none}
+.final h2{font:500 11px/1.5 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:#e8d6af}
+.end-names{font:35px/1.35 var(--script);color:#d9b56b;margin:22px auto 5px;max-width:270px}
+.end-names span{font-size:17px}
+.end-date{font-size:10px}
+.end-orn{margin:12px;font-size:13px}
+.hero{background-color:#f3e9d2;background-position:center center;background-size:cover}
+.hero-inside{padding-top:23.5vh;padding-top:calc(23.5svh)}
+.eyebrow{font-size:10.55px;font-weight:500;letter-spacing:.08em;color:#5a4416}
+.names{font:400 32px/1.05 var(--script);margin:10px auto 0}
+.names em{font:normal 18px/1.05 var(--serif);margin:3px auto}
+.hero-inside .orn{margin:10px auto 6px;line-height:20px}
+.date-text{font:500 21px/1.7 var(--serif);letter-spacing:.04em;margin-top:0;text-transform:none}
+.hero-time{font-size:10.55px;letter-spacing:.01em;margin-top:5px;font-weight:400}
+.scroll-tip{bottom:33px;font-size:11px;gap:0;letter-spacing:.06em;color:#4a3a14}
+.scroll-tip span:last-child{font-size:25px}
+.music{width:46px;height:46px;border:1px solid #b89246;background:#fffdf7eb;color:#9a7526}
+.langs{background:#fffdf7ee;border:1px solid #e2ce9e}
+.intro{background:transparent;opacity:1;transition:visibility 0s linear 3.5s;overflow:hidden}
+.intro.off{opacity:1;visibility:hidden;pointer-events:none}
+.intro-bg{transition:opacity 2.9s ease,transform 4s ease;opacity:1}
+.intro.off .intro-bg{opacity:0}
+.intro-tint{transition:opacity 2.9s ease;opacity:1}
+.intro.off .intro-tint{opacity:0}
+.intro-label{padding-bottom:max(55px,7vh)}
+.intro-title{font:500 21px var(--serif);letter-spacing:.25em}
+.intro-label>div:last-child{font-size:10px;letter-spacing:.07em}
+.hero-inside{opacity:0;transform:none;transition:none}
+body.opened .hero-inside{opacity:1}
+.hero-inside .eyebrow,.hero-inside .names span,.hero-inside .names em,.hero-inside .orn,.hero-inside .date-text,.hero-inside .hero-time{opacity:0;transform:translateY(8px)}
+body.opened .hero-inside .eyebrow{animation:letterAppear 1.4s ease .65s both}
+body.opened .hero-inside .names span:first-child{animation:letterAppear 2s ease 1.05s both}
+body.opened .hero-inside .names em{animation:letterAppear 1.1s ease 1.8s both}
+body.opened .hero-inside .names span:last-child{animation:letterAppear 2s ease 2.15s both}
+body.opened .hero-inside .orn{animation:letterAppear 1.2s ease 2.65s both}
+body.opened .hero-inside .date-text{animation:letterAppear 1.2s ease 2.9s both}
+body.opened .hero-inside .hero-time{animation:letterAppear 1.3s ease 3.2s both}
+@keyframes letterAppear{from{opacity:0;transform:translateY(9px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@media(min-width:478px){.hero-inside{padding-top:198px}}
+@media(max-width:359px){
+ .section{padding-left:8%;padding-right:8%}
+ .section h2{font-size:20px}
+ .welcome,.calendar-section,.schedule,.location,.wishes-section,.count-section,.final{height:auto;min-height:0}
+ .welcome{padding-top:95px;padding-bottom:58px}
+ .calendar-section,.schedule,.location,.wishes-section,.count-section,.final{padding-top:82px;padding-bottom:70px}
+ .welcome .welcome-p:first-of-type{font-size:18px}
+ .welcome .welcome-p:nth-of-type(2){font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+ body.opened .hero-inside .eyebrow,body.opened .hero-inside .names span,body.opened .hero-inside .names em,body.opened .hero-inside .orn,body.opened .hero-inside .date-text,body.opened .hero-inside .hero-time{animation:none;opacity:1;transform:none;filter:none}
+}
