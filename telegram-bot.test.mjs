@@ -15,7 +15,7 @@ before(async()=>{
 });
 after(async()=>await rm(dir,{recursive:true,force:true}));
 test('catalog exposes all three working preview links',async()=>{
- assert.equal(BOT_TEMPLATES.length,9);
+ assert.equal(BOT_TEMPLATES.length,10);
  await service.processUpdate(msg('/start'));
  await service.processUpdate(cb('catalog'));
  await service.processUpdate(cb('view:zarhal'));
