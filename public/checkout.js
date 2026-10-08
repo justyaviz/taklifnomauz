@@ -19,10 +19,10 @@ function renderCatalog(){
   const tile=document.createElement('div');tile.className='tile';
   const poster=document.createElement('div');poster.className='template-poster';poster.dataset.theme=t.id;
   poster.innerHTML='<div class="poster-decoration" aria-hidden="true">✧</div><div class="poster-content"><span>TAKLIFLY INVITATION</span><strong>Azizbek <em>&amp;</em> Malika</strong><small>12 · 06 · 2027</small></div><div class="poster-bottom" aria-hidden="true">✦ ── ✦ ── ✦</div>';
-  if(t.id==='ulugbek-muslima'){
-   poster.querySelector('.poster-content strong').innerHTML='Ulug‘bek <em>&amp;</em> Muslima';
-   poster.querySelector('.poster-content small').textContent='23 · 10 · 2026';
-   poster.querySelector('.poster-content span').textContent='ASL TAKLIFNOMA · UZ / RU';
+  if(t.id==='oq-saroy-original'){
+   poster.querySelector('.poster-content strong').innerHTML='Muhammad <em>&amp;</em> Amina';
+   poster.querySelector('.poster-content small').textContent='21 · 11 · 2026';
+   poster.querySelector('.poster-content span').textContent='OQ SAROY · ASL NAMUNA';
   }
   const symbol=document.createElement('span');symbol.className='symbol';symbol.textContent=t.emoji;
   const title=document.createElement('h3');title.textContent=t.title;
