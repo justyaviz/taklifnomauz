@@ -268,7 +268,7 @@ function renderWishes(){
 }
 async function getWishes(){try{const r=await fetch(wishesEndpoint);if(!r.ok)throw Error();s.wishes=(await r.json()).wishes||[];renderWishes()}catch{$('wishStatus').textContent=T('failed')}}
 function resetEdit(){$('wishForm').reset();s.editing=null;$('cancelEdit').classList.add('hidden')}
-async function deleteWish(w){if(!confirm(T('confirmDelete')))return;try{const res=await fetch(wishesEndpoint+'/encodeURIComponent(w.id),{method:'DELETE',headers:{'content-type':'application/json','x-wish-token':s.owners[w.id]},body:'{}'});if(!res.ok)throw Error();delete s.owners[w.id];localStorage.setItem(wishStorageKey,JSON.stringify(s.owners));await getWishes();$('wishStatus').textContent=T('deleted')}catch{$('wishStatus').textContent=T('failed')}}
+async function deleteWish(w){if(!confirm(T('confirmDelete')))return;try{const res=await fetch(wishesEndpoint+'/'+encodeURIComponent(w.id),{method:'DELETE',headers:{'content-type':'application/json','x-wish-token':s.owners[w.id]},body:'{}'});if(!res.ok)throw Error();delete s.owners[w.id];localStorage.setItem(wishStorageKey,JSON.stringify(s.owners));await getWishes();$('wishStatus').textContent=T('deleted')}catch{$('wishStatus').textContent=T('failed')}}
 async function submitWish(e){
  e.preventDefault();const name=$('wishName').value.trim(),text=$('wishText').value.trim();
  if(name.length<2||name.length>40||text.length<3||text.length>300){$('wishStatus').textContent=T('invalid');return}
