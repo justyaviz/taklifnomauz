@@ -3,6 +3,7 @@ import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {randomUUID,randomBytes,createHmac,scryptSync,timingSafeEqual} from 'node:crypto';
 import {storage,normalize,starter,err,clean,jsonSafe} from './admin-data.mjs';
+import {TEMPLATE_IDS,DEFAULT_TEMPLATE_PRICES} from './template-catalog.mjs';
 
 export function createAdminService({dataDir,publicDir}){
  const store=storage(dataDir),uploaded=path.join(dataDir,'uploads');
@@ -35,9 +36,9 @@ export function createAdminService({dataDir,publicDir}){
    const m={jpg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',mp3:'audio/mpeg'};
    res.writeHead(200,{'Content-Type':m[name.split('.').pop()],'Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'});if(method==='HEAD')res.end();else createReadStream(f).pipe(res);return true;
   }
-  const templatePreview=p.match(/^\/t\/(oq-saroy|zarhal|minimal)\/?$/);
+  const templatePreview=p.match(/^\/t\/([a-z0-9-]{3,60})\/?$/);
   const page=p.match(/^\/i\/([a-z0-9-]{3,60})\/?$/);
-  if(page||templatePreview){
+  if(page||(templatePreview&&TEMPLATE_IDS.includes(templatePreview[1]))){
    let inv=templatePreview?{...starter(),id:'demo',slug:'demo',template:templatePreview[1],groom:'Azizbek',bride:'Malika',eventDate:'2027-06-12',eventTime:'18:00',venue:'Oq Saroy tantanalar zali',published:true,allowRsvp:false,allowWishes:false,views:0}:await findPublished(page[1]);
    if(!inv&&url.searchParams.get('preview')==='1'&&await auth(req))inv=(await store.invites()).find(x=>x.slug===page[1]);
    if(!inv)return reply(res,404,{error:'Taklifnoma topilmadi yoki nashr qilinmagan'}),true;
@@ -145,7 +146,7 @@ export function createAdminService({dataDir,publicDir}){
   // Manual bank-transfer checkout is for TAKLIFLY's independent website, NOT Telegram bot purchases.
   if(p==='/api/admin/card/settings'){
    if(method==='GET'){
-    const data=await store.read('card-settings.json',{cardNumber:'',cardHolder:'',currency:'UZS',prices:{'oq-saroy':0,zarhal:0,minimal:0}});
+    const data=await store.read('card-settings.json',{cardNumber:'',cardHolder:'',currency:'UZS',prices:DEFAULT_TEMPLATE_PRICES()});
     return reply(res,200,{settings:data}),true;
    }
    if(method==='PUT'){
@@ -153,7 +154,7 @@ export function createAdminService({dataDir,publicDir}){
     if(number&&!/^\d{16,19}$/.test(number))throw err(400,'Qabul qiluvchi karta raqami 16–19 ta raqamdan iborat bo‘lsin');
     if(holder&&holder.length<3)throw err(400,'Karta egasining ism-familiyasini to‘liq kiriting');
     const prices={};
-    for(const id of ['oq-saroy','zarhal','minimal']){
+    for(const id of TEMPLATE_IDS){
      const val=Number(d.prices?.[id]);
      if(!Number.isSafeInteger(val)||val<0||val>1_000_000_000)throw err(400,'Narx butun son bo‘lishi kerak');
      prices[id]=val;
@@ -196,11 +197,11 @@ export function createAdminService({dataDir,publicDir}){
    createReadStream(f).pipe(res);return true;
   }
   if(p==='/api/admin/bot/prices'){
-   const ids=['oq-saroy','zarhal','minimal'];
+   const ids=TEMPLATE_IDS;
    const fallback=String(process.env.TELEGRAM_PRICES_STARS||'').split(',').map(Number);
    const defaults=Object.fromEntries(ids.map((id,i)=>[id,Number.isSafeInteger(fallback[i])&&fallback[i]>0?fallback[i]:0]));
    if(method==='GET'){
-    const fromFile=await store.read('bot-prices.json',defaults);
+    const fromFile=await store.read('bot-prices.json',{});
     const safe=Object.fromEntries(ids.map(id=>[id,Number.isSafeInteger(fromFile[id])&&fromFile[id]>=0?fromFile[id]:0]));
     return reply(res,200,{prices:safe,webhookConfigured:Boolean(process.env.TELEGRAM_BOT_TOKEN&&process.env.TELEGRAM_WEBHOOK_SECRET)}),true;
    }
