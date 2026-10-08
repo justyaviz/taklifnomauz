@@ -142,6 +142,37 @@ export function createAdminService({dataDir,publicDir}){
    const name=randomUUID()+'.'+(ext==='jpeg'?'jpg':ext);await mkdir(uploaded,{recursive:true});await writeFile(path.join(uploaded,name),bin,{flag:'wx'});
    return reply(res,201,{url:'/media/'+name,name,bytes:bin.length}),true;
   }
+  if(p==='/api/admin/bot/prices'){
+   const ids=['oq-saroy','zarhal','minimal'];
+   const fallback=String(process.env.TELEGRAM_PRICES_STARS||'').split(',').map(Number);
+   const defaults=Object.fromEntries(ids.map((id,i)=>[id,Number.isSafeInteger(fallback[i])&&fallback[i]>0?fallback[i]:0]));
+   if(method==='GET'){
+    const fromFile=await store.read('bot-prices.json',defaults);
+    const safe=Object.fromEntries(ids.map(id=>[id,Number.isSafeInteger(fromFile[id])&&fromFile[id]>=0?fromFile[id]:0]));
+    return reply(res,200,{prices:safe,webhookConfigured:Boolean(process.env.TELEGRAM_BOT_TOKEN&&process.env.TELEGRAM_WEBHOOK_SECRET)}),true;
+   }
+   if(method==='PUT'){
+    const data=await input(req),result={};
+    for(const id of ids){
+     const value=Number(data?.prices?.[id]);
+     if(!Number.isSafeInteger(value)||value<0||value>100000)throw err(400,id+' uchun Stars narxi 0–100000 bo‘lsin');
+     result[id]=value;
+    }
+    await store.mutate(()=>store.write('bot-prices.json',result));
+    return reply(res,200,{prices:result}),true;
+   }
+   return reply(res,405,{error:'Method not allowed'}),true;
+  }
+  if(p==='/api/admin/bot/orders'&&method==='GET'){
+   const orders=await store.read('bot-orders.json',[]);
+   const items=orders.slice(-150).reverse().map(o=>({
+    id:o.id,template:o.template,stars:o.stars,status:o.status,
+    groom:o.answers?.groom||'',bride:o.answers?.bride||'',chatId:o.chatId,
+    paidAt:o.paidAt||null,createdAt:o.createdAt,readyAt:o.readyAt||null,
+    slug:o.slug||null
+   }));
+   return reply(res,200,{orders:items,total:orders.length}),true;
+  }
   if(p==='/api/admin/stats'&&method==='GET'){
    const a=await store.invites(),r=await store.read(rsvpName),w=await store.read(wishName);
    return reply(res,200,{total:a.length,published:a.filter(x=>x.published).length,views:a.reduce((n,x)=>n+(x.views||0),0),rsvp:r.length,wishes:w.length}),true;
