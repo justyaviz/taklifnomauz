@@ -40,6 +40,10 @@ test('create, preview, publish and update public invitation',async()=>{
  assert.equal(r.status,200);
  r=await request('/i/sinov-taklif','GET',undefined,false);assert.equal(r.status,200);
  const html=await r.text();assert.ok(html.includes('id="invite-data"'));assert.ok(html.includes('Zuhra'));assert.ok(html.includes('Yunusobod'));
+ assert.match(html, /<h1 class="names"><span>Ali<\/span><em data-t="and">va<\/em><span>Zuhra<\/span><\/h1>/);
+ assert.match(html, /<div class="end-names">Ali va Zuhra<\/div>/);
+ assert.match(html, /<meta property="og:title" content="Ali &amp; Zuhra — Taklifnoma">/);
+ assert.match(html, /src="\/app.js\?v=/);
  r=await request('/api/invitations/sinov-taklif','GET',undefined,false);const data=(await r.json()).invitation;assert.equal(data.eventTime,'18:30');assert.equal(data.published,true);
 });
 test('RSVP records and wishes moderation',async()=>{
