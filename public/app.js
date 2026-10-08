@@ -31,6 +31,7 @@ function heroMoment(lang){
 function setElement(selector,value){const el=document.querySelector(selector);if(el)el.textContent=String(value??'')}
 function applyInvitation(){
  if(!invitation)return;
+ document.body.dataset.template=invitation.template||'oq-saroy';
  setElement('.names span:first-child',invitation.groom);
  setElement('.names span:last-child',invitation.bride);
  setElement('.end-names',invitation.groom+' va '+invitation.bride);
