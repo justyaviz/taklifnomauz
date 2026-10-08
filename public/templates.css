@@ -1,0 +1,37 @@
+/* Three commercial wedding-invitation themes. Default OQ SAROY stays untouched. */
+body[data-template="zarhal"]{--navy:#381b36;--gold:#f8c75a;--goldlight:#fff0ad;--cream:#fff2e0;--ink:#511b46;background:#21142d}
+body[data-template="zarhal"] .mobile{background:linear-gradient(155deg,#2c1431 0%,#571f50 28%,#3b1b3d 55%,#201226 100%);box-shadow:0 0 38px rgba(87,32,58,.32)}
+body[data-template="zarhal"] .hero{background-image:linear-gradient(135deg,rgba(123,33,81,.6),rgba(254,200,91,.13) 50%,rgba(54,19,57,.75)),url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp');filter:saturate(1.23)}
+body[data-template="zarhal"] .hero:after{background:linear-gradient(transparent,#3b1b3d)}
+body[data-template="zarhal"] .names,body[data-template="zarhal"] .eyebrow,body[data-template="zarhal"] .date-text,body[data-template="zarhal"] .hero-time{color:#fff1c7;text-shadow:0 2px 9px #581c43,0 0 28px #e7a24e}
+body[data-template="zarhal"] .hero-inside{background:radial-gradient(ellipse at center,rgba(84,31,57,.38),transparent 65%)}
+body[data-template="zarhal"] .section{background:radial-gradient(ellipse at 50% 15%,#64365b,#2b1831 70%);border-top:1px solid #d69b5680}
+body[data-template="zarhal"] .section h2{color:#ffdd8d;text-shadow:0 0 20px #e89b7560}
+body[data-template="zarhal"] .timeline>div,body[data-template="zarhal"] .wish-card{border-color:#f1c77d4a}
+body[data-template="zarhal"] .btn.gold{background:linear-gradient(140deg,#f8d57d,#bc6e52);color:#361b31}
+body[data-template="zarhal"] .scroll-tip{color:#fff3d8}
+body[data-template="zarhal"] .intro-bg{filter:hue-rotate(330deg) saturate(1.2)}
+body[data-template="zarhal"] .counts>div{background:linear-gradient(150deg,#fff3d6,#f0c88b)}
+body[data-template="zarhal"] .music{background:#f8cf8e;color:#4b2339}
+body[data-template="minimal"]{--navy:#ece6db;--gold:#987858;--goldlight:#b89a74;--cream:#333a38;--ink:#403c38;background:#eeeae4}
+body[data-template="minimal"] .mobile{background:linear-gradient(#fffdf7,#f7f2eb 50%,#efebe4 100%);box-shadow:0 0 42px #d9d1bf66}
+body[data-template="minimal"] .hero{background-image:linear-gradient(180deg,rgba(255,253,248,.88),rgba(246,238,225,.67)),url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp');filter:saturate(.35)}
+body[data-template="minimal"] .hero:after{background:linear-gradient(transparent,#f7f2eb)}
+body[data-template="minimal"] .hero-inside .names,body[data-template="minimal"] .eyebrow,body[data-template="minimal"] .date-text,body[data-template="minimal"] .hero-time{color:#49453f;text-shadow:none}
+body[data-template="minimal"] .names{font-family:"Cormorant Garamond",Georgia,serif!important;font-size:clamp(48px,12vw,62px);font-weight:500}
+body[data-template="minimal"] .hero-orbit{border-color:#8d7b6550}
+body[data-template="minimal"] .scroll-tip{color:#5e5548}
+body[data-template="minimal"] .section{background:#fbf8f2;color:#4a453f;border-top:1px solid #ddd2c1}
+body[data-template="minimal"] .section h2{color:#615243;text-shadow:none}
+body[data-template="minimal"] .section p,body[data-template="minimal"] .welcome-p{color:#686054}
+body[data-template="minimal"] .rule{color:#9a8061}
+body[data-template="minimal"] .signature-script,body[data-template="minimal"] .venue,body[data-template="minimal"] .end-names{color:#856b4c}
+body[data-template="minimal"] .cal-grid>span,body[data-template="minimal"] .timeline span{color:#5e564d}
+body[data-template="minimal"] .timeline time{color:#896c51}
+body[data-template="minimal"] .btn.gold{background:#716052;color:#fff}
+body[data-template="minimal"] .wish-card{background:#fff;border:1px solid #dfd9ce;box-shadow:0 4px 14px #cec5b33d}
+body[data-template="minimal"] .wish-card p{color:#4a453f}
+body[data-template="minimal"] .counts>div{background:#fff;border:1px solid #d9cec0;box-shadow:none}
+body[data-template="minimal"] .music{background:#fff;border-color:#ac987e;color:#6b5b4b}
+body[data-template="minimal"] .intro-bg{filter:grayscale(.8) brightness(1.28)}
+body[data-template="minimal"] .map-placeholder{border-color:#eee8de;box-shadow:0 5px 16px #a89b8640}
