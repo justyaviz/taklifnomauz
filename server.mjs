@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { createAdminService } from './admin-service.mjs';
 import { createReadStream, existsSync } from 'node:fs';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { randomBytes, randomUUID, createHash, timingSafeEqual } from 'node:crypto';
@@ -10,6 +11,7 @@ const publicDir = path.resolve(root, 'public');
 const dataDir = process.env.DATA_DIR || path.join(root, 'storage');
 const wishesFile = path.join(dataDir, 'wishes.json');
 const port = Number(process.env.PORT || 3000);
+const adminService = createAdminService({ dataDir, publicDir });
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.json':'application/json','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const samples = [
   {id:'sample-dilnoza',name:'Dilnoza',text:'Baxtli bo‘linglar! 💐',createdAt:'2026-10-01T12:00:00Z',sample:true},
@@ -61,6 +63,7 @@ const server=createServer(async (req,res)=>{
  try {
    const url=new URL(req.url,'http://localhost');
    if(url.pathname==='/health')return reply(res,200,{ok:true});
+   if(await adminService.handle(req,res,url))return;
    if(url.pathname.startsWith('/api/'))return await api(req,res,url);
    if(req.method!=='GET'&&req.method!=='HEAD')return reply(res,405,{error:'Method not allowed'});
    let route=decodeURIComponent(url.pathname);
