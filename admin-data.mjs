@@ -2,6 +2,7 @@ import {mkdir,readFile,writeFile,rename} from 'node:fs/promises';
 import {mkdirSync,existsSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
+import {TEMPLATE_IDS} from './template-catalog.mjs';
 export const err=(status,message)=>Object.assign(new Error(message),{httpStatus:status});
 export const clean=(s,n=200)=>String(s??'').replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,n);
 export const slugify=s=>clean(s,90).toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').slice(0,60);
@@ -25,7 +26,7 @@ export function normalize(d,existing){
  for(const [key,max] of Object.entries({title:100,groom:80,bride:80,eventDate:10,eventTime:5,timezone:6,eventType:100,venue:150,address:300,mapQuery:300,googleUrl:1500,yandexUrl:1500,lead:1000,message:1500,family:120,dressCode:250,heroImage:1500,backgroundImage:1500,musicUrl:1500})){
   if(key in d)o[key]=clean(d[key],max)
  }
- if('template' in d){if(!['oq-saroy','zarhal','minimal'].includes(String(d.template)))throw err(400,'Shablon noto‘g‘ri');o.template=String(d.template)}
+ if('template' in d){if(!TEMPLATE_IDS.includes(String(d.template)))throw err(400,'Shablon noto‘g‘ri');o.template=String(d.template)}
  if('slug' in d){o.slug=slugify(d.slug);if(o.slug.length<3)throw err(400,'Havola nomi kamida 3 belgi bo‘lsin')}
  for(const k of ['published','allowWishes','allowRsvp'])if(k in d)o[k]=Boolean(d[k]);
  if('audioStart' in d)o.audioStart=Math.min(3600,Math.max(0,Number(d.audioStart)||0));
