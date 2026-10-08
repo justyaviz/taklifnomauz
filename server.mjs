@@ -71,7 +71,7 @@ const server=createServer(async (req,res)=>{
    const filepath=path.resolve(publicDir,'.'+route);
    if(!filepath.startsWith(publicDir+path.sep))return reply(res,403,{error:'Forbidden'});
    if(!existsSync(filepath))return reply(res,404,{error:'Not found'});
-   res.writeHead(200,{'content-type':mime[path.extname(filepath)]||'application/octet-stream','cache-control':route==='/index.html'?'no-cache':'public,max-age=3600','x-content-type-options':'nosniff','x-frame-options':'SAMEORIGIN','referrer-policy':'strict-origin-when-cross-origin'});
+   res.writeHead(200,{'content-type':mime[path.extname(filepath)]||'application/octet-stream','cache-control':(/\.(js|css|html)$/.test(route)?'no-cache, must-revalidate':'public,max-age=3600'),'x-content-type-options':'nosniff','x-frame-options':'SAMEORIGIN','referrer-policy':'strict-origin-when-cross-origin'});
    if(req.method==='HEAD')return res.end();
    createReadStream(filepath).pipe(res);
  }catch(e){console.error('request error',e);if(!res.headersSent)reply(res,e.status||500,{error:e.status?e.message:'Server xatosi'})}
