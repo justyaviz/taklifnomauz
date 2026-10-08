@@ -67,3 +67,19 @@ Admin → **Telegram savdo** shows purchases and lets the owner set Stars prices
 6. Open the new Telegram bot, send /start and run a small real or Telegram test-environment payment before making the bot public.
 
 Digital products sold inside Telegram bots must use Stars (XTR). The service uses an empty provider_token. It NEVER fulfills an invoice on pre_checkout_query alone, only on verified successful_payment. Persistent order and payment charge IDs are stored on the Railway volume. Music and decorative images require confirmed licensing rights before commercial resale.
+
+
+## TAKLIFLY independent card-transfer checkout and named guest sharing
+
+The independent website storefront is at https://oq-saroy-web-production.up.railway.app/shop
+- Choose among OQ SAROY, ZARHAL and NAFIS.
+- Enter customer name and contact, display only the RECEIVING card number/owner name (not the buyer's card), transfer externally and upload receipt photo (PNG/JPEG/WebP, max 8 MB).
+- Receipts are PRIVATE in the Railway volume at DATA_DIR/private-receipts; never served from public media. The buyer sees progress via the secret order link. Uploading a receipt DOES NOT mean payment is confirmed.
+- Administrator uses /admin → Karta buyurtmalari to set bank card details and UZS prices, open each private receipt and confirm the actual incoming bank transfer (or reject).
+- Only after manual confirmation the buyer sees a unique activation code in the independent checkout status page.
+- A buyer who has already purchased on the independent website can use Telegram bot /redeem TKF-... to activate the invitation editor. The claim code can be associated with one Telegram user only.
+- When the invitation is ready, the bot has a "💌 Mehmon taklif qilish" button. Enter a guest name; the bot creates a personal invitation letter/post, a ?guest=NAME invitation link and Telegram share button. Guests see their name on the invitation page.
+
+**Telegram rules**: digital services offered for sale *inside* Telegram bots or mini apps must use Telegram Stars (XTR). Manual bank-transfer checkout is intentionally available only on the independent website. The bot must not advertise, solicit or redirect an in-Telegram digital purchase to a third-party payment checkout. Existing in-bot Stars functionality remains optional and is disabled by setting Stars prices to zero; do not set Stars prices in /admin unless planning to sell via Telegram Stars.
+
+**Important:** Receiver card number and name must be entered by the owner in /admin and are not hardcoded. Do not paste sensitive payment credentials or BotFather tokens in source code or chat. The Telegram bot requires TELEGRAM_BOT_TOKEN in the Railway production environment to operate; TELEGRAM_WEBHOOK_SECRET is already configured separately.
