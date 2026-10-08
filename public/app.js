@@ -151,8 +151,11 @@ function tick(){
 }
 // Original audio behaviour: begin at 26s, use a media fragment for iOS,
 // default full volume (no fade), and restart the track at 26s.
-const SOURCE_AUDIO=invitation?invitation.musicUrl:'https://taklifnoma.imaantech.uz/assets/audio/song4.mp3';
-const AUDIO_OFFSET=invitation?Number(invitation.audioStart||0):26;
+const TUY_BOB_AUDIO='https://d2ol7oe51mr4n9.cloudfront.net/user_3IlOECcDNYVkvUZvnr4wEMjZLN5/ef3c85d8-13c4-4a46-973d-a0d43e01ec60.mp3';
+const invitationAudio=invitation?.musicUrl || '';
+const isOriginalDefault=!invitationAudio || invitationAudio.includes('/assets/audio/song4.mp3');
+const SOURCE_AUDIO=isOriginalDefault?TUY_BOB_AUDIO:invitationAudio;
+const AUDIO_OFFSET=isOriginalDefault?0:Number(invitation.audioStart||0);
 // The file remains on the reference provider's site. It is not bundled or owned here.
 const audioEl=new Audio(SOURCE_AUDIO?SOURCE_AUDIO+'#t='+AUDIO_OFFSET:'');
 if(!SOURCE_AUDIO)document.querySelector('#musicButton')?.classList.add('hidden');
