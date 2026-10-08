@@ -11,11 +11,11 @@ const msg=(text,pay)=>({update_id:updateId++,message:{message_id:updateId,chat:{
 const cb=(data)=>({update_id:updateId++,callback_query:{id:'cb-'+updateId,from:{id:42},data,message:{chat:{id:42},message_id:9}}});
 before(async()=>{
  dir=await mkdtemp(path.join(os.tmpdir(),'oq-bot-test-'));
- service=createTelegramService({dataDir:dir,baseUrl:'https://example.com',botToken:'123:TEST_BOT_TOKEN',webhookSecret:secret,prices:'12,23,34',transport:async(method,params)=>{calls.push({method,params});return method==='getFile'?{file_path:'photos/a.jpg',file_size:100}:true}});
+ service=createTelegramService({dataDir:dir,baseUrl:'https://example.com',botToken:'123:TEST_BOT_TOKEN',webhookSecret:secret,prices:'0,0,0,0,0,0,12,23,34',transport:async(method,params)=>{calls.push({method,params});return method==='getFile'?{file_path:'photos/a.jpg',file_size:100}:true}});
 });
 after(async()=>await rm(dir,{recursive:true,force:true}));
 test('catalog exposes all three working preview links',async()=>{
- assert.equal(BOT_TEMPLATES.length,3);
+ assert.equal(BOT_TEMPLATES.length,9);
  await service.processUpdate(msg('/start'));
  await service.processUpdate(cb('catalog'));
  await service.processUpdate(cb('view:zarhal'));
