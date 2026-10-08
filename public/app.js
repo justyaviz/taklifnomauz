@@ -64,6 +64,10 @@ function applyInvitation(){
   tr[lang].wishPara2=invitation.message;
   tr[lang].families=invitation.family;
   tr[lang].weddingInvitation=invitation.eventType||tr[lang].weddingInvitation;
+  if(invitation.template==='oq-saroy-original'){
+   tr[lang].weddingInvitation=lang==='ru'?'ПРИГЛАШЕНИЕ НА СВАДЬБУ':'NIKOH TO‘YIGA TAKLIFNOMA';
+   if(lang==='uz')tr[lang].heroTime=tr[lang].heroTime.replace(/^([^·]+?)(\s*·)/,(match,day,sep)=>day.trim()+' KUNI'+sep);
+  }
  }
  const rows=document.querySelector('.timeline');if(rows){
   rows.replaceChildren();
@@ -126,6 +130,7 @@ function setLang(lang){
  $('langUz').classList.toggle('selected',lang==='uz');$('langRu').classList.toggle('selected',lang==='ru');
  $('wishName').placeholder=T('yourNamePlaceholder');$('wishText').placeholder=T('yourWishPlaceholder');
  setMusicButton();document.title=invitation?(invitation.groom+' '+(lang==='ru'?'и':'va')+' '+invitation.bride+' — '+(lang==='ru'?'Приглашение':'Taklifnoma')):(lang==='ru'?'Мухаммад и Амина — приглашение':'Muhammad & Amina — OQ SAROY');
+ if(invitation?.previewDemo&&invitation.template==='oq-saroy-original')document.title='Muhammad & Amina';
  if(invitation){
    const display=formatInvitationDate(lang);
    setElement('.date-text',display);setElement('.end-date',display);
