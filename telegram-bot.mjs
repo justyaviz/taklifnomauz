@@ -260,6 +260,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
    const invitations=await store.invites(),idx=invitations.findIndex(x=>x.id===o.invitationId&&x.botOrderId===o.id);
    if(idx<0)return {error:'Taklifnoma topilmadi'};
    const inv=invitations[idx],changes={...a,published:true,template:o.template};
+   if(a.music)changes.musicUrl=a.music;
    if(a.map){if(validUrl(a.map)){
     if(a.map.includes('yandex'))changes.yandexUrl=a.map;
     else changes.googleUrl=a.map;
@@ -323,6 +324,52 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
   ]);
   return true;
  }
+ async function redeemWebsiteCode(user,chat,code){
+  const claim=String(code||'').trim().toUpperCase();
+  if(!/^TKF-[A-F0-9]{24}$/.test(claim))return say(chat,'Aktivlashtirish kodi formati xato. Masalan: /redeem TKF-...');
+  const result=await store.mutate(async()=>{
+   const cardOrders=await store.read('card-orders.json',[]);
+   const payment=cardOrders.find(x=>x.status==='approved'&&x.claimCode===claim);
+   if(!payment)return {error:'Kod topilmadi yoki admin tomonidan tasdiqlanmagan.'};
+   if(payment.redeemedBy&&payment.redeemedBy!==user)return {error:'Bu kod boshqa akkauntga biriktirilgan.'};
+   const list=await orders();
+   const existing=list.find(x=>x.cardOrderId===payment.id);
+   if(existing){
+    if(existing.telegramUserId!==user)return {error:'Bu kod oldin ishlatilgan.'};
+    existing.active=true;
+    for(const item of list)if(item.telegramUserId===user&&item.id!==existing.id)item.active=false;
+    if(existing.status==='ready')return {ready:existing};
+    if(!existing.step)existing.step='groom';
+    existing.status='collecting';
+    await store.write('bot-orders.json',list);
+    return {order:existing,existing:true};
+   }
+   const invitations=await store.invites();
+   const orderId=randomUUID();
+   const invite=normalize({slug:'web-'+payment.id.slice(0,8),template:payment.template,published:false},{
+    ...starter(),id:randomUUID(),published:false,views:0,botOrderId:orderId,
+    telegramUserId:user,webOrderId:payment.id
+   });
+   invitations.push(invite);
+   await store.write('invitations.json',invitations);
+   for(const item of list)if(item.telegramUserId===user)item.active=false;
+   const order={
+    id:orderId,telegramUserId:user,chatId:chat,template:payment.template,
+    stars:0,status:'collecting',step:'groom',active:true,answers:{},
+    invitationId:invite.id,slug:invite.slug,cardOrderId:payment.id,
+    createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
+   };
+   list.push(order);
+   payment.redeemedBy=user;payment.redeemedAt=new Date().toISOString();
+   await store.write('bot-orders.json',list);
+   await store.write('card-orders.json',cardOrders);
+   return {order,existing:false};
+  });
+  if(result.error)return say(chat,'⚠️ '+result.error);
+  if(result.ready)return getOrder(chat,user,result.ready.id);
+  await say(chat,result.existing?'✅ Buyurtmangizni to‘ldirishni davom ettiramiz.':'✅ Aktivlashtirish kodi qabul qilindi! Taklifnomangiz uchun ma’lumotlarni kiriting.');
+  return prompt(chat,result.order);
+ }
  async function processUpdate(update){
   const callback=update.callback_query;
   if(callback){
@@ -350,6 +397,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
   if(command==='/start')return welcome(chat);
   if(command==='/templates')return catalog(chat);
   if(command==='/orders')return myOrders(chat,user);
+  if(command==='/redeem')return redeemWebsiteCode(user,chat,String(msg.text||'').trim().split(/\s+/).slice(1).join(' '));
   if(command==='/invite')return myOrders(chat,user);
   if(command==='/cancel'){
    await store.mutate(async()=>{const list=await orders();for(const o of list)if(o.telegramUserId===user)o.active=false;await store.write('bot-orders.json',list)});
