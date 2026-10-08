@@ -57,7 +57,7 @@ function openEditor(inv){
  $('editorTitle').textContent=(inv.groom||'')+' & '+(inv.bride||'');
  $('editorStatus').className='tag'+(inv.published?'':' draft');
  $('editorStatus').textContent=inv.published?'● Nashr qilingan':'○ Qoralama';
- ['title','slug','groom','bride','eventType','eventDate','eventTime','timezone','venue','address','mapQuery','googleUrl','yandexUrl','lead','message','family','dressCode','heroImage','backgroundImage','musicUrl','audioStart','published','allowWishes','allowRsvp'].forEach(k=>setField(k,inv[k]));
+ ['title','slug','groom','bride','template','eventType','eventDate','eventTime','timezone','venue','address','mapQuery','googleUrl','yandexUrl','lead','message','family','dressCode','heroImage','backgroundImage','musicUrl','audioStart','published','allowWishes','allowRsvp'].forEach(k=>setField(k,inv[k]));
  setField('gold',inv.colors?.gold||'#b89246');setField('navy',inv.colors?.navy||'#15192a');
  state.gallery=[...(inv.gallery||[])];state.schedule=(inv.schedule||[]).map(x=>({...x}));
  renderGallery();renderSchedule();$('saveStatus').textContent='Barcha ma’lumotlarni tekshiring';
@@ -83,7 +83,7 @@ function renderGallery(){
 }
 function collect(){
  const d={};
- for(const k of ['title','slug','groom','bride','eventType','eventDate','eventTime','timezone','venue','address','mapQuery','googleUrl','yandexUrl','lead','message','family','dressCode','heroImage','backgroundImage','musicUrl','audioStart','published','allowWishes','allowRsvp'])d[k]=getField(k);
+ for(const k of ['title','slug','groom','bride','template','eventType','eventDate','eventTime','timezone','venue','address','mapQuery','googleUrl','yandexUrl','lead','message','family','dressCode','heroImage','backgroundImage','musicUrl','audioStart','published','allowWishes','allowRsvp'])d[k]=getField(k);
  d.audioStart=Number(d.audioStart)||0;
  d.colors={gold:getField('gold'),navy:getField('navy')};d.gallery=[...state.gallery];d.schedule=getSchedule();return d;
 }
