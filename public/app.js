@@ -32,16 +32,29 @@ function tick(){
 // Replace with an owned/licensed recording before commercial publication.
 const SOURCE_AUDIO='https://taklifnoma.imaantech.uz/assets/audio/song4.mp3';
 const AUDIO_OFFSET=26;
-let audioEl=null, audioReady=false;
+let audioEl=null, audioReady=false, fadeFrame=0;
 function setMusicButton(){
  const button=$('musicButton');
  button.classList.toggle('playing',s.playing);
  button.setAttribute('aria-pressed',String(s.playing));
  button.setAttribute('aria-label',s.playing?(s.lang==='ru'?'Выключить музыку':'Musiqani o‘chirish'):(s.lang==='ru'?'Включить музыку':'Musiqani yoqish'));
 }
+function fadeAudio(){
+ cancelAnimationFrame(fadeFrame);
+ if(!audioEl)return;
+ const start=performance.now(),maxVolume=.75,duration=3000;
+ const step=(t)=>{
+   if(!s.playing||!audioEl)return;
+   audioEl.volume=maxVolume*Math.min(1,(t-start)/duration);
+   if(t-start<duration)fadeFrame=requestAnimationFrame(step);
+ };
+ audioEl.volume=0;
+ fadeFrame=requestAnimationFrame(step);
+}
 async function music(on){
  if(!on){
    s.playing=false;
+   cancelAnimationFrame(fadeFrame);
    if(audioEl)audioEl.pause();
    setMusicButton();
    return;
@@ -49,18 +62,21 @@ async function music(on){
  if(!audioEl){
    audioEl=new Audio(SOURCE_AUDIO);
    audioEl.preload='auto';
-   audioEl.loop=true;
-   audioEl.volume=0.8;
+   audioEl.loop=false;
+   audioEl.volume=0;
    audioEl.addEventListener('loadedmetadata',()=>{
      if(!audioReady){try{audioEl.currentTime=AUDIO_OFFSET}catch{}audioReady=true}
    },{once:true});
-   audioEl.addEventListener('ended',()=>{try{audioEl.currentTime=AUDIO_OFFSET}catch{}if(s.playing)audioEl.play().catch(()=>{})});
+   audioEl.addEventListener('ended',()=>{
+     if(s.playing){try{audioEl.currentTime=AUDIO_OFFSET}catch{}audioEl.play().catch(()=>{})}
+   });
  }
  s.playing=true;setMusicButton();
  try{
    if(audioEl.readyState>=1 && !audioReady){audioEl.currentTime=AUDIO_OFFSET;audioReady=true}
-   await audioEl.play();
-   // On metadata-ready devices the first instant starts at the requested offset.
+   const playPromise=audioEl.play();
+   fadeAudio();
+   await playPromise;
    if(audioEl.currentTime<2 && audioEl.readyState>=1){audioEl.currentTime=AUDIO_OFFSET;audioReady=true}
  }catch{
    s.playing=false;setMusicButton();
