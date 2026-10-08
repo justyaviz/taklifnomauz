@@ -83,3 +83,20 @@ The independent website storefront is at https://oq-saroy-web-production.up.rail
 **Telegram rules**: digital services offered for sale *inside* Telegram bots or mini apps must use Telegram Stars (XTR). Manual bank-transfer checkout is intentionally available only on the independent website. The bot must not advertise, solicit or redirect an in-Telegram digital purchase to a third-party payment checkout. Existing in-bot Stars functionality remains optional and is disabled by setting Stars prices to zero; do not set Stars prices in /admin unless planning to sell via Telegram Stars.
 
 **Important:** Receiver card number and name must be entered by the owner in /admin and are not hardcoded. Do not paste sensitive payment credentials or BotFather tokens in source code or chat. The Telegram bot requires TELEGRAM_BOT_TOKEN in the Railway production environment to operate; TELEGRAM_WEBHOOK_SECRET is already configured separately.
+
+## Nine-template catalog (2026-10)
+
+Catalog order (shop, Telegram bot, admin):
+- Classic: /t/classic — champagne paper and arch frame
+- Royal: /t/royal — sapphire and crown
+- Premium Gold: /t/premium — black-gold metal details
+- Festival: /t/festival — vibrant musical celebration
+- Elegant: /t/elegant — blush floral design
+- Modern: /t/modern — blue-purple geometric gradients
+- OQ SAROY: /t/oq-saroy — prior style preserved
+- ZARHAL: /t/zarhal — prior style preserved
+- NAFIS: /t/minimal — prior style preserved
+
+Canonical IDs and order are in template-catalog.mjs. Six new independent responsive theme skins are in public/extra-themes.css. All nine appear in public checkout and Telegram bot catalogs, admin editor theme selection, Stars pricing and UZS pricing. Existing price files for the former three themes remain compatible.
+
+Important: Repository history did not contain six independently stored old design snapshots. Classic, Royal, Premium Gold, Festival, Elegant and Modern are freshly rebuilt visual concepts rather than byte-identical restorations of missing files. Confirm licensing rights for linked media before commercializing.
