@@ -17,6 +17,8 @@ function renderCatalog(){
  $('templateList').replaceChildren();
  for(const t of catalog){
   const tile=document.createElement('div');tile.className='tile';
+  const poster=document.createElement('div');poster.className='template-poster';poster.dataset.theme=t.id;
+  poster.innerHTML='<div class="poster-decoration" aria-hidden="true">✧</div><div class="poster-content"><span>TAKLIFLY INVITATION</span><strong>Azizbek <em>&amp;</em> Malika</strong><small>12 · 06 · 2027</small></div><div class="poster-bottom" aria-hidden="true">✦ ── ✦ ── ✦</div>';
   const symbol=document.createElement('span');symbol.className='symbol';symbol.textContent=t.emoji;
   const title=document.createElement('h3');title.textContent=t.title;
   const caption=document.createElement('p');caption.textContent=t.subtitle;
@@ -26,7 +28,7 @@ function renderCatalog(){
   const checkout=document.createElement('a');checkout.className='btn primary';checkout.textContent='Tanlash →';
   checkout.href=(t.price&&details.configured)?'/checkout/'+encodeURIComponent(t.id):'#';
   if(!t.price||!details.configured){checkout.setAttribute('aria-disabled','true');checkout.style.pointerEvents='none';checkout.style.opacity='.45'}
-  row.append(demo,checkout);tile.append(symbol,title,caption,price,row);$('templateList').append(tile);
+  row.append(demo,checkout);tile.append(poster,symbol,title,caption,price,row);$('templateList').append(tile);
  }
 }
 async function initCheckout(){
