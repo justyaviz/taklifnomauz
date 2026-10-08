@@ -29,7 +29,7 @@ after(async()=>{proc?.kill();await rm(temp,{recursive:true,force:true})});
 const record=[];
 test('independent card checkout disabled until details configured',async()=>{
  const r=await request('/api/checkout/catalog');assert.equal(r.status,200);
- const list=(await r.json()).templates;assert.equal(list.length,9);
+ const list=(await r.json()).templates;assert.equal(list.length,10);
  const details=await (await request('/api/checkout/payment-details')).json();assert.equal(details.configured,false);assert.equal(details.cardNumber,null);
  const order=await request('/api/checkout/orders','POST',{template:'oq-saroy',customerName:'Alisher',contact:'@testuser'});
  assert.equal(order.status,503);
