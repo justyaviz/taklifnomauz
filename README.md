@@ -42,3 +42,28 @@ Required Railway environment variables: ADMIN_USERNAME, ADMIN_PASSWORD_HASH (scr
 User interface entry: public/admin.html; client actions: public/admin.js; backend: admin-service.mjs; persistence model: admin-data.mjs. node --test validates admin authentication, invitations, media, RSVP, moderation and password rotation.
 
 Some stock decorative images and sample background audio still load from the source website; replace with files you own or have permission to use for long-term deployment.
+
+
+## Telegram taklifnoma shop (Stars)
+
+Three template previews:
+- OQ SAROY: https://oq-saroy-web-production.up.railway.app/t/oq-saroy
+- ZARHAL: https://oq-saroy-web-production.up.railway.app/t/zarhal
+- NAFIS: https://oq-saroy-web-production.up.railway.app/t/minimal
+
+Bot commands: /start, /templates, /orders, /cancel, /help, /support, /terms, /paysupport.
+
+Buyer workflow: browse a preview → choose a template → Telegram Stars checkout → pre-checkout amount, currency, user and order ID verified → wait for successful_payment → save Telegram payment charge ID → fill groom/bride, date/time, venue/address, map pin, invitation text, MP3 and photos in chat → publish unique invitation URL. Reopen or edit via /orders.
+
+Admin → **Telegram savdo** shows purchases and lets the owner set Stars prices per template. Setting a price to 0 disables checkout.
+
+### BotFather activation (owner action)
+
+1. Open https://t.me/BotFather and use /newbot.
+2. In Railway → oq-saroy-replica → oq-saroy-web → Variables, set TELEGRAM_BOT_TOKEN to the token issued by BotFather. NEVER commit the token or send it to customers.
+3. The separately configured TELEGRAM_WEBHOOK_SECRET and PUBLIC_BASE_URL are already used by the app; at startup the service registers its HTTPS webhook at /api/telegram/webhook.
+4. Optionally configure TELEGRAM_SUPPORT_USERNAME for payment support.
+5. In /admin → Telegram savdo, set the prices in Telegram Stars and save them.
+6. Open the new Telegram bot, send /start and run a small real or Telegram test-environment payment before making the bot public.
+
+Digital products sold inside Telegram bots must use Stars (XTR). The service uses an empty provider_token. It NEVER fulfills an invoice on pre_checkout_query alone, only on verified successful_payment. Persistent order and payment charge IDs are stored on the Railway volume. Music and decorative images require confirmed licensing rights before commercial resale.
