@@ -168,6 +168,28 @@ async function handleRecord(target){
  const guest=get('data-copy-guest');if(guest!==null&&guest!==undefined){copy(publicUrl(inv)+'?guest='+encodeURIComponent(guest));return}
 }
 async function personalLink(){if(!state.selected)return;const name=$('personalGuestName').value.trim();if(!name)return notify('Mehmon ismini kiriting',true);await copy(publicUrl(state.selected)+'?guest='+encodeURIComponent(name))}
+
+function downloadCsv(filename,columns,items){
+ const escapeCell=value=>{
+  const str=String(value??'');
+  const safe=/^[\s]*[=+@-]/.test(str)?"'"+str:str;
+  return '"'+safe.replace(/"/g,'""')+'"';
+ };
+ const csv='\uFEFF'+[columns.map(c=>escapeCell(c[0])).join(','),...items.map(row=>columns.map(c=>escapeCell(row[c[1]])).join(','))].join('\r\n');
+ const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+ const link=document.createElement('a');link.href=url;link.download=filename;document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+}
+async function exportCollection(kind){
+ if(!state.selected)return;
+ const endpoint='/api/admin/invitations/'+state.selected.id+'/'+(kind==='guests'?'rsvps':'wishes');
+ try{
+  const result=await api(endpoint),slug=state.selected.slug;
+  if(kind==='guests')downloadCsv(slug+'-mehmonlar.csv',[['Ism','name'],['Telefon','phone'],['Holat','status'],['Soni','count'],['Izoh','note'],['Sana','createdAt']],result.items||[]);
+  else downloadCsv(slug+'-tilaklar.csv',[['Ism','name'],['Tilak','text'],['Ko‘rinadi','approved'],['Sana','createdAt']],result.items||[]);
+  notify('CSV fayl tayyor');
+ }catch(e){notify(e.message,true)}
+}
+
 function wire(){
  $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginError').textContent='';const submit=q('button[type=submit]',$('loginForm'));submit.disabled=true;try{const r=await api('/api/admin/login',{method:'POST',body:{username:$('loginUser').value,password:$('loginPass').value}});showApp(r.username)}catch(err){$('loginError').textContent=err.message}finally{submit.disabled=false}});
  qa('button[data-view]').forEach(b=>b.addEventListener('click',()=>view(b.dataset.view)));
@@ -191,6 +213,8 @@ function wire(){
  $('addGalleryUrl').addEventListener('click',()=>{const url=prompt('HTTPS rasm havolasi');if(url&&/^https:\/\//i.test(url)&&state.gallery.length<25){state.gallery.push(url);renderGallery()}});
  $('copyPersonalLink').addEventListener('click',personalLink);
  $('addGuest').addEventListener('click',addGuest);
+ $('exportGuests').addEventListener('click',()=>exportCollection('guests'));
+ $('exportWishes').addEventListener('click',()=>exportCollection('wishes'));
  $('refreshWishes').addEventListener('click',()=>renderWishes().catch(e=>notify(e.message,true)));
  $('guestList').addEventListener('change',async e=>{const item=e.target.closest('[data-rsvp-status]');if(!item)return;try{await api('/api/admin/invitations/'+state.selected.id+'/rsvps/'+item.dataset.rsvpStatus,{method:'PATCH',body:{status:item.value}});notify('Holat yangilandi')}catch(e){notify(e.message,true)}});
  for(const box of ['guestList','wishesList'])$(box).addEventListener('click',e=>handleRecord(e.target).catch(x=>notify(x.message,true)));
