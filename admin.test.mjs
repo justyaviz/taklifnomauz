@@ -57,6 +57,26 @@ test('RSVP records and wishes moderation',async()=>{
  r=await request('/api/admin/invitations/'+created.id+'/wishes/'+wish.id,'PATCH',{approved:true});assert.equal(r.status,200);
  r=await request('/api/invitations/sinov-taklif/wishes','GET',undefined,false);assert.equal((await r.json()).wishes.length,1);
 });
+test('Telegram template prices and sales endpoints require admin auth',async()=>{
+ let r=await request('/api/admin/bot/prices','GET',undefined,false);
+ assert.equal(r.status,401);
+ r=await request('/api/admin/bot/prices');
+ assert.equal(r.status,200);
+ assert.equal((await r.json()).prices['oq-saroy'],0);
+ r=await request('/api/admin/bot/prices','PUT',{prices:{'oq-saroy':39,zarhal:59,minimal:25}});
+ assert.equal(r.status,200);
+ r=await request('/api/admin/bot/prices');
+ const updated=(await r.json()).prices;
+ assert.deepEqual(updated,{'oq-saroy':39,zarhal:59,minimal:25});
+ r=await request('/api/admin/bot/orders');
+ assert.equal(r.status,200);
+ assert.ok(Array.isArray((await r.json()).orders));
+ for(const name of ['oq-saroy','zarhal','minimal']){
+  r=await request('/t/'+name,'GET',undefined,false);
+  assert.equal(r.status,200);
+  assert.ok((await r.text()).includes('"template":"'+name+'"'));
+ }
+});
 test('media upload and password rotation',async()=>{
  let bytes=Buffer.concat([Buffer.from('89504e470d0a1a0a','hex'),randomBytes(140)]);
  let r=await fetch(root+'/api/admin/upload?name=test.png',{method:'POST',headers:{Cookie:cookie},body:bytes});assert.equal(r.status,201);
