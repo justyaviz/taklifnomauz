@@ -27,7 +27,7 @@ after(async()=>{proc?.kill();await rm(dir,{recursive:true,force:true})});
 test('ten templates, six styles first, original couple plus former three',()=>{
  assert.equal(TEMPLATE_IDS.length,10);
  assert.deepEqual(TEMPLATE_IDS.slice(0,6),['classic','royal','premium','festival','elegant','modern']);
- assert.deepEqual(TEMPLATE_IDS.slice(6),['ulugbek-muslima','oq-saroy','zarhal','minimal']);
+ assert.deepEqual(TEMPLATE_IDS.slice(6),['oq-saroy-original','oq-saroy','zarhal','minimal']);
  assert.deepEqual(CARD_CATALOG.map(t=>t.id),TEMPLATE_IDS);
  assert.equal(new Set(TEMPLATE_CATALOG.map(t=>t.title)).size,10);
 });
@@ -48,7 +48,7 @@ test('ten public previews deliver right data, theme CSS and couple names',async(
   assert.equal(res.status,200,id+' preview HTTP');
   const html=await res.text();
   assert.ok(html.includes('"template":"'+id+'"'),id+' data binding');
-  assert.ok(html.includes(id==='ulugbek-muslima'?"Ulug":"Azizbek"),id+' demo name');
+  assert.ok(html.includes(id==='oq-saroy-original'?"Muhammad":"Azizbek"),id+' demo name');
   if(['classic','royal','premium','festival','elegant','modern'].includes(id)){
    assert.ok(css.includes('body[data-template="'+id+'"] .hero'),id+' hero skin');
    assert.ok(css.includes('body[data-template="'+id+'"] .section'),id+' independent section');
@@ -72,4 +72,13 @@ test('Telegram bot catalog lists all ten including original couple',async()=>{
  assert.ok(sent);
  const choices=sent.params.reply_markup.inline_keyboard.slice(0,10).flat();
  assert.deepEqual(choices.map(x=>x.callback_data),TEMPLATE_IDS.map(x=>'view:'+x));
+});
+
+test('original OQ SAROY is a public, read-only demo with guestbook and exact reference couple',async()=>{
+ const response=await fetch(url+'/t/oq-saroy-original');
+ assert.equal(response.status,200);
+ const html=await response.text();
+ for(const marker of ['Muhammad','Amina','2026-11-21','Navro','"template":"oq-saroy-original"','"previewDemo":true','"allowWishes":true'])assert.ok(html.includes(marker),marker);
+ assert.match(html,/oq-saroy-original\.css/);
+ assert.equal((await fetch(url+'/t/ulugbek-muslima')).status,404);
 });
