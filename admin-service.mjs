@@ -35,13 +35,14 @@ export function createAdminService({dataDir,publicDir}){
    const m={jpg:'image/jpeg',png:'image/png',webp:'image/webp',gif:'image/gif',mp3:'audio/mpeg'};
    res.writeHead(200,{'Content-Type':m[name.split('.').pop()],'Cache-Control':'public,max-age=86400','X-Content-Type-Options':'nosniff'});if(method==='HEAD')res.end();else createReadStream(f).pipe(res);return true;
   }
+  const templatePreview=p.match(/^\/t\/(oq-saroy|zarhal|minimal)\/?$/);
   const page=p.match(/^\/i\/([a-z0-9-]{3,60})\/?$/);
-  if(page){
-   let inv=await findPublished(page[1]);
+  if(page||templatePreview){
+   let inv=templatePreview?{...starter(),id:'demo',slug:'demo',template:templatePreview[1],groom:'Azizbek',bride:'Malika',eventDate:'2027-06-12',eventTime:'18:00',venue:'Oq Saroy tantanalar zali',published:true,allowRsvp:false,allowWishes:false,views:0}:await findPublished(page[1]);
    if(!inv&&url.searchParams.get('preview')==='1'&&await auth(req))inv=(await store.invites()).find(x=>x.slug===page[1]);
    if(!inv)return reply(res,404,{error:'Taklifnoma topilmadi yoki nashr qilinmagan'}),true;
    if(method!=='GET'&&method!=='HEAD')return reply(res,405,{error:'Method not allowed'}),true;
-   if(method==='GET'&&url.searchParams.get('preview')!=='1')await store.mutate(async()=>{const all=await store.invites(),item=all.find(x=>x.id===inv.id);if(item){item.views=(item.views||0)+1;await store.write('invitations.json',all)}});
+   if(method==='GET'&&!templatePreview&&url.searchParams.get('preview')!=='1')await store.mutate(async()=>{const all=await store.invites(),item=all.find(x=>x.id===inv.id);if(item){item.views=(item.views||0)+1;await store.write('invitations.json',all)}});
    let html=await readFile(path.join(publicDir,'index.html'),'utf8');
    // Render invitation identity on the server, so stale/cached JS cannot show demo names.
    const escaped=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
