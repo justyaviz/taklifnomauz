@@ -153,10 +153,14 @@ function tick(){
 // Original audio behaviour: begin at 26s, use a media fragment for iOS,
 // default full volume (no fade), and restart the track at 26s.
 const TUY_BOB_AUDIO='https://d2ol7oe51mr4n9.cloudfront.net/user_3IlOECcDNYVkvUZvnr4wEMjZLN5/ef3c85d8-13c4-4a46-973d-a0d43e01ec60.mp3';
+const ORIGINAL_OQ_AUDIO='https://taklifnoma.imaantech.uz/assets/audio/song4.mp3';
+const originalOqTemplate=invitation?.template==='oq-saroy-original';
+const referenceDemo=Boolean(originalOqTemplate&&invitation?.previewDemo);
 const invitationAudio=invitation?.musicUrl || '';
-const isOriginalDefault=!invitationAudio || invitationAudio.includes('/assets/audio/song4.mp3');
-const SOURCE_AUDIO=isOriginalDefault?TUY_BOB_AUDIO:invitationAudio;
-const AUDIO_OFFSET=isOriginalDefault?0:Number(invitation.audioStart||0);
+const useOriginalOqSong=originalOqTemplate&&(!invitationAudio||invitationAudio===TUY_BOB_AUDIO||invitationAudio.includes('/assets/audio/song4.mp3'));
+const isOriginalDefault=!invitationAudio||invitationAudio.includes('/assets/audio/song4.mp3');
+const SOURCE_AUDIO=referenceDemo?'':useOriginalOqSong?ORIGINAL_OQ_AUDIO:isOriginalDefault?TUY_BOB_AUDIO:invitationAudio;
+const AUDIO_OFFSET=useOriginalOqSong?26:isOriginalDefault?0:Number(invitation?.audioStart||0);
 // The file remains on the reference provider's site. It is not bundled or owned here.
 const audioEl=new Audio(SOURCE_AUDIO?SOURCE_AUDIO+'#t='+AUDIO_OFFSET:'');
 if(!SOURCE_AUDIO)document.querySelector('#musicButton')?.classList.add('hidden');
@@ -284,11 +288,15 @@ function renderWishes(){
   list.append(card);
  }
 }
-async function getWishes(){try{const r=await fetch(wishesEndpoint);if(!r.ok)throw Error();s.wishes=(await r.json()).wishes||[];renderWishes()}catch{$('wishStatus').textContent=T('failed')}}
+async function getWishes(){
+ if(referenceDemo){s.wishes=[{id:'ref1',name:'Dilnoza',text:'Baxtli bo‘linglar! 💐'},{id:'ref2',name:'Sardor',text:'To‘yingiz muborak bo‘lsin!'}];renderWishes();return}
+ try{const r=await fetch(wishesEndpoint);if(!r.ok)throw Error();s.wishes=(await r.json()).wishes||[];renderWishes()}catch{$('wishStatus').textContent=T('failed')}
+}
 function resetEdit(){$('wishForm').reset();s.editing=null;$('cancelEdit').classList.add('hidden')}
 async function deleteWish(w){if(!confirm(T('confirmDelete')))return;try{const res=await fetch(wishesEndpoint+'/'+encodeURIComponent(w.id),{method:'DELETE',headers:{'content-type':'application/json','x-wish-token':s.owners[w.id]},body:'{}'});if(!res.ok)throw Error();delete s.owners[w.id];localStorage.setItem(wishStorageKey,JSON.stringify(s.owners));await getWishes();$('wishStatus').textContent=T('deleted')}catch{$('wishStatus').textContent=T('failed')}}
 async function submitWish(e){
- e.preventDefault();const name=$('wishName').value.trim(),text=$('wishText').value.trim();
+ e.preventDefault();
+ if(referenceDemo){$('wishStatus').textContent=s.lang==='ru'?'Это демо. Пожелания доступны в готовом приглашении.':'Bu namuna. Tilaklar tayyor taklifnomada ishlaydi.';return}const name=$('wishName').value.trim(),text=$('wishText').value.trim();
  if(name.length<2||name.length>40||text.length<3||text.length>300){$('wishStatus').textContent=T('invalid');return}
  const btn=$('wishForm').querySelector('[type=submit]');btn.disabled=true;
  try{
