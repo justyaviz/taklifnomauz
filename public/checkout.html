@@ -2,6 +2,46 @@
 <style>
 :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17213b;background:#f6f8fd}*{box-sizing:border-box}body{margin:0}h1,h2,h3,p{margin-top:0}button,input{font:inherit}button{cursor:pointer}a{text-decoration:none;color:inherit}.hidden{display:none!important}.shell{max-width:1060px;margin:auto;padding:24px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 22px}.logo{font-size:26px;font-weight:900;letter-spacing:-.055em;color:#132b5b}.logo:after{content:".";color:#ab7bf6}.top small{color:#8791a8;font-weight:650}.hero{border-radius:25px;background:linear-gradient(128deg,#10244f 5%,#31377e 55%,#6648ad);color:white;padding:44px 42px;position:relative;overflow:hidden}.hero:after{content:"✦";position:absolute;right:8%;top:10%;font-size:180px;color:#fff2;transform:rotate(10deg)}.hero h1{font-size:clamp(28px,5vw,52px);max-width:620px;letter-spacing:-.05em;line-height:1.08;margin:16px 0}.hero p{color:#d9dff3;max-width:590px;line-height:1.65}.label{font-size:11px;letter-spacing:.14em;font-weight:850;text-transform:uppercase;color:#8066c9}.hero .label{color:#d9b4ff}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin-top:20px}.tile{background:white;border:1px solid #e8ebf2;border-radius:20px;padding:24px;box-shadow:0 8px 22px #18315408;display:grid;gap:14px}.tile .symbol{font-size:37px}.tile h3{font-size:19px;margin:0}.tile p{color:#7c8494;line-height:1.5;font-size:13px;min-height:42px;margin:0}.price{font-weight:850;color:#142d5a;font-size:19px}.price small{font-size:12px;font-weight:500;color:#99a2b5}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{min-height:43px;border-radius:11px;border:1px solid #dde3ee;padding:11px 16px;background:white;font-weight:700;font-size:12px;color:#243a62;display:inline-flex;justify-content:center;align-items:center;gap:8px}.btn.primary{background:linear-gradient(110deg,#2857b9,#6d4bcb);border:0;color:#fff}.btn:hover{filter:brightness(.97)}.btn:disabled{opacity:.45;cursor:not-allowed}.title{font-size:27px;letter-spacing:-.045em;margin:26px 0 7px}.muted{color:#8390a4}.small{font-size:12px}.box{max-width:660px;margin:24px auto;background:white;border-radius:22px;border:1px solid #e6e8f1;padding:28px;box-shadow:0 12px 38px #1d2b4b0b}.steps{display:flex;gap:8px;margin:18px 0}.steps span{height:4px;background:#e9e7f3;flex:1;border-radius:5px}.steps span.active{background:#7355d2}.field{display:grid;gap:8px;margin-top:16px;color:#42516a;font-size:12px;font-weight:700}.field input{min-height:46px;border:1px solid #dce2eb;border-radius:11px;padding:12px;font-size:14px;outline:none}.field input:focus{border-color:#7961cc;box-shadow:0 0 0 3px #7b62d016}.payment-card{background:linear-gradient(125deg,#132a60,#473787);border-radius:20px;padding:24px;color:#fff;display:grid;gap:20px;box-shadow:0 12px 26px #24356d25;margin-top:20px}.carddigits{font-size:clamp(18px,5vw,27px);font-weight:780;letter-spacing:.08em;word-break:break-word}.cardholder{font-size:12px;color:#ecdcff;letter-spacing:.08em;text-transform:uppercase}.two{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.status{background:#fff6dc;color:#866321;border-radius:12px;padding:13px 16px;font-size:12px;line-height:1.5}.status.ok{background:#e8f7ec;color:#228144}.status.error{background:#fce9e9;color:#b04747}.receipt{border:2px dashed #c6c6e9;padding:20px 15px;text-align:center;border-radius:14px;display:grid;justify-items:center;gap:9px}.receipt input{font-size:12px;max-width:250px}.footer{text-align:center;padding:35px 0;color:#9aa4b3;font-size:11px}.buttonrow{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin-top:18px}#loading{color:#7a8191;margin:20px auto;text-align:center}
 @media(max-width:730px){.shell{padding:14px}.grid{grid-template-columns:1fr}.hero{padding:33px 24px}.box{padding:20px 16px;margin:22px auto}.tile p{min-height:0}.hero:after{font-size:90px;top:24%}}
+
+/* Live-theme-inspired catalog previews: distinct compositions, not repeated placeholder art. */
+.template-poster{height:245px;position:relative;overflow:hidden;border-radius:14px;background:#142747;isolation:isolate;display:grid;place-items:center;text-align:center;color:#f5dc9b;border:1px solid #ffffff1c}
+.template-poster:before,.template-poster:after{content:"";position:absolute;pointer-events:none}
+.template-poster .poster-decoration{position:absolute;top:14%;left:50%;transform:translateX(-50%);font:46px Georgia,serif;opacity:.65}
+.template-poster .poster-content{position:relative;z-index:1;display:grid;justify-items:center;gap:8px;margin-top:10px;padding:10px}
+.template-poster .poster-content span{font:700 8px Arial,sans-serif;letter-spacing:.22em}
+.template-poster .poster-content strong{font:400 31px/1.07 'Cormorant Garamond',Georgia,serif;max-width:230px}
+.template-poster .poster-content em{font:italic 18px Georgia,serif}
+.template-poster .poster-content small{font-size:9px;letter-spacing:.3em}
+.template-poster .poster-bottom{position:absolute;bottom:18px;font:16px Georgia,serif;opacity:.85;letter-spacing:.3em}
+.tile .symbol{font-size:20px}.tile{align-content:start}
+.template-poster[data-theme="classic"]{background:linear-gradient(#f9f0dbdc,#e3cc9aee),url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp') center/cover;color:#775637}
+.template-poster[data-theme="classic"]:before{inset:13px;border:2px double #a88e5d;border-radius:110px 110px 4px 4px}
+.template-poster[data-theme="classic"] .poster-content strong{font-style:italic;font-size:26px}
+.template-poster[data-theme="royal"]{background:linear-gradient(#09162ce6,#183963dd),url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp') center/cover;color:#ffdf8d}
+.template-poster[data-theme="royal"]:before{inset:14px;border:1px solid #e3b76da0}
+.template-poster[data-theme="royal"] .poster-decoration{font-size:53px}
+.template-poster[data-theme="premium"]{background:linear-gradient(135deg,#040404,#26221a 51%,#070707);color:#f4d285}
+.template-poster[data-theme="premium"]:before{inset:24px 15px;border:1px solid #b18e52}
+.template-poster[data-theme="premium"] .poster-content strong{font-size:28px;font-style:normal;letter-spacing:.08em}
+.template-poster[data-theme="festival"]{background:radial-gradient(circle at 50% 18%,#ffd45e9c,transparent 47%),linear-gradient(140deg,#dc5a29,#98277b 58%,#3d1659);color:#fff1c0}
+.template-poster[data-theme="festival"]:before{inset:14px;border:2px dashed #fff4acb8;border-radius:24px}
+.template-poster[data-theme="festival"] .poster-content strong{font-size:35px;font-weight:700}
+.template-poster[data-theme="elegant"]{background:radial-gradient(circle at 10% 10%,#ffeded,#fffbf4 65%);color:#a16c7d}
+.template-poster[data-theme="elegant"]:before{content:"❀";font:70px Georgia,serif;left:-10px;top:-20px;color:#d6a1b373}
+.template-poster[data-theme="elegant"]:after{content:"❀";font:70px Georgia,serif;right:-5px;bottom:-20px;color:#d6a1b373}
+.template-poster[data-theme="elegant"] .poster-content strong{font-style:italic}
+.template-poster[data-theme="modern"]{background:radial-gradient(circle at 90% 25%,#a624ee87,transparent 50%),linear-gradient(125deg,#08152f,#103366);color:#c5f5ff;text-align:left;place-items:center start}
+.template-poster[data-theme="modern"]:before{right:-45px;top:20px;width:165px;height:165px;border:2px solid #83deff61;transform:rotate(30deg);border-radius:22px}
+.template-poster[data-theme="modern"] .poster-decoration{left:88%;color:#63c9ff}
+.template-poster[data-theme="modern"] .poster-content{justify-items:start;text-align:left;padding-left:23px}
+.template-poster[data-theme="modern"] .poster-content strong{font-weight:700}
+.template-poster[data-theme="oq-saroy"]{background:linear-gradient(#f9eddaa6,#bfa472b0),url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp') center/cover;color:#64491a}
+.template-poster[data-theme="oq-saroy"] .poster-content strong{font-style:italic;font-size:38px}
+.template-poster[data-theme="zarhal"]{background:linear-gradient(135deg,#542045,#9c48618c),url('https://taklifnoma.imaantech.uz/assets/oqsaroy/zal.webp') center/cover;color:#ffdb88}
+.template-poster[data-theme="minimal"]{background:#fbf7ef;color:#7a6550}
+.template-poster[data-theme="minimal"]:before{inset:16px;border:1px solid #d9c6a9}
+.template-poster[data-theme="minimal"] .poster-content strong{font-weight:300}
+@media(max-width:730px){.template-poster{height:220px}}
 </style></head><body>
 <div class="shell"><header class="top"><a class="logo" href="/shop">taklifly</a><small>Har bir lahzaga taklif!</small></header>
 <div id="catalogPage" class="hidden">
