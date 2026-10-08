@@ -115,7 +115,13 @@ function setLang(lang){
  document.querySelectorAll('[data-t]').forEach(el=>{el.textContent=T(el.dataset.t)});
  $('langUz').classList.toggle('selected',lang==='uz');$('langRu').classList.toggle('selected',lang==='ru');
  $('wishName').placeholder=T('yourNamePlaceholder');$('wishText').placeholder=T('yourWishPlaceholder');
- setMusicButton();document.title=lang==='ru'?'Мухаммад и Амина — приглашение':'Muhammad & Amina — OQ SAROY';
+ setMusicButton();document.title=invitation?(invitation.groom+' '+(lang==='ru'?'и':'va')+' '+invitation.bride+' — '+(lang==='ru'?'Приглашение':'Taklifnoma')):(lang==='ru'?'Мухаммад и Амина — приглашение':'Muhammad & Amina — OQ SAROY');
+ if(invitation){
+   const dateObj=new Date(invitation.eventDate+'T12:00:00Z');
+   const display=new Intl.DateTimeFormat(lang==='ru'?'ru-RU':'uz-UZ',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(dateObj);
+   setElement('.date-text',display);setElement('.end-date',display);
+   setElement('.end-names',invitation.groom+' '+(lang==='ru'?'и':'va')+' '+invitation.bride);
+ }
  document.querySelector('meta[name="description"]').content=lang==='ru'?'Свадебное приглашение — 21 ноября 2026 года, Ташкент':'Muhammad va Amina nikoh to‘yiga taklifnoma · 21-noyabr, 2026-yil';
  calendar();renderWishes();
 }
