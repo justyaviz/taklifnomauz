@@ -35,6 +35,7 @@ body[data-template="oq-saroy-original"] .welcome{min-height:546px;padding-top:11
 body[data-template="oq-saroy-original"] .calendar-section{min-height:654px;padding-top:106px;padding-bottom:47px}
 body[data-template="oq-saroy-original"] .schedule{min-height:540px;padding-top:105px;padding-bottom:40px}
 body[data-template="oq-saroy-original"] .location{min-height:713px;padding-top:106px;padding-bottom:35px}
+body[data-template="oq-saroy-original"] .map-placeholder iframe{height:172px!important}
 body[data-template="oq-saroy-original"] .wishes-section{display:block;min-height:706px;padding-top:105px;padding-bottom:36px}
 body[data-template="oq-saroy-original"] .count-section{min-height:344px;padding-top:106px;padding-bottom:24px}
 body[data-template="oq-saroy-original"] .final{min-height:530px;padding-top:104px;padding-bottom:140px}
