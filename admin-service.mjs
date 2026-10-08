@@ -43,10 +43,29 @@ export function createAdminService({dataDir,publicDir}){
    if(method!=='GET'&&method!=='HEAD')return reply(res,405,{error:'Method not allowed'}),true;
    if(method==='GET'&&url.searchParams.get('preview')!=='1')await store.mutate(async()=>{const all=await store.invites(),item=all.find(x=>x.id===inv.id);if(item){item.views=(item.views||0)+1;await store.write('invitations.json',all)}});
    let html=await readFile(path.join(publicDir,'index.html'),'utf8');
-   const inject='<script id="invite-data" type="application/json">'+jsonSafe(inv)+'</script><script defer src="/app.js"></script>';
+   // Render invitation identity on the server, so stale/cached JS cannot show demo names.
+   const escaped=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+   const monthUz=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
+   const [year,month,day]=inv.eventDate.split('-').map(Number);
+   const dateUz=day+'-'+monthUz[month-1]+' · '+year;
+   const dateCap=day+'-'+monthUz[month-1][0].toUpperCase()+monthUz[month-1].slice(1)+' · '+year;
+   const fullNames=inv.groom+' va '+inv.bride;
+   html=html.replace(/(<h1 class="names"><span>)[\s\S]*?(<\/span><em data-t="and">va<\/em><span>)[\s\S]*?(<\/span><\/h1>)/,
+       (_,start,mid,end)=>start+escaped(inv.groom)+mid+escaped(inv.bride)+end);
+   html=html.replace(/(<div class="end-names">)[\s\S]*?(<\/div>)/,
+       (_,start,end)=>start+escaped(fullNames)+end);
+   html=html.replace(/(<div class="date-text">)[\s\S]*?(<\/div>)/,(_,start,end)=>start+escaped(dateCap)+end);
+   html=html.replace(/(<div class="end-date">)[\s\S]*?(<\/div>)/,(_,start,end)=>start+escaped(dateUz)+end);
+   html=html.replace(/(<div class="venue">)[\s\S]*?(<\/div>)/,(_,start,end)=>start+escaped(inv.venue)+end);
+   const title=inv.groom+' & '+inv.bride+' — Taklifnoma';
+   const summary=fullNames+' nikoh to‘yi · '+dateCap+' · '+inv.venue;
+   html=html.replace(/<title>[^<]*<\/title>/,'<title>'+escaped(title)+'</title>');
+   html=html.replace(/(<meta name="description" content=")[^"]*(")/,(_,a,b)=>a+escaped(summary)+b);
+   html=html.replace(/(<meta property="og:title" content=")[^"]*(")/,(_,a,b)=>a+escaped(title)+b);
+   html=html.replace(/(<meta property="og:description" content=")[^"]*(")/,(_,a,b)=>a+escaped(summary)+b);
+   const scriptVersion=encodeURIComponent(inv.updatedAt||'1');
+   const inject='<script id="invite-data" type="application/json">'+jsonSafe(inv)+'</script><script defer src="/app.js?v='+scriptVersion+'"></script>';
    html=html.replace('<script defer src="/app.js"></script>',inject);
-   const title=(inv.groom+' & '+inv.bride+' — Taklifnoma').replace(/[<>]/g,'');
-   html=html.replace(/<title>[^<]*<\/title>/,'<title>'+title+'</title>');
    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(method==='HEAD'?'':html);return true;
   }
   const pub=p.match(/^\/api\/invitations\/([a-z0-9-]{3,60})(?:\/(wishes|rsvp))?$/);
