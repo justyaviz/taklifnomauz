@@ -3,12 +3,9 @@ import {mkdir,writeFile,readFile} from 'node:fs/promises';
 import {randomUUID,randomBytes,createHash,timingSafeEqual} from 'node:crypto';
 import path from 'node:path';
 import {storage,clean,err} from './admin-data.mjs';
+import {TEMPLATE_CATALOG,DEFAULT_TEMPLATE_PRICES} from './template-catalog.mjs';
 
-export const CARD_CATALOG=Object.freeze([
- {id:'oq-saroy',title:'OQ SAROY',subtitle:'Qirollik uslubidagi tantanali taklifnoma',emoji:'🏰'},
- {id:'zarhal',title:'ZARHAL',subtitle:'Oltinrang bayramona taklifnoma',emoji:'✨'},
- {id:'minimal',title:'NAFIS',subtitle:'Zamonaviy va nafis taklifnoma',emoji:'🤍'}
-]);
+export const CARD_CATALOG=TEMPLATE_CATALOG;
 const isAllowed=id=>CARD_CATALOG.some(t=>t.id===id);
 const sha=x=>createHash('sha256').update(String(x)).digest('hex');
 const eq=(a,b)=>{const aa=Buffer.from(String(a||'')),bb=Buffer.from(String(b||''));return aa.length===bb.length&&timingSafeEqual(aa,bb)};
@@ -22,7 +19,7 @@ async function bodyJSON(req,limit=8192){
 export function createCheckoutService({dataDir,publicDir}){
  const store=storage(dataDir),hits=new Map(),receiptDir=path.join(dataDir,'private-receipts');
  const orders=()=>store.read('card-orders.json',[]);
- const settings=()=>store.read('card-settings.json',{cardNumber:'',cardHolder:'',currency:'UZS',prices:Object.fromEntries(CARD_CATALOG.map(c=>[c.id,0]))});
+ const settings=()=>store.read('card-settings.json',{cardNumber:'',cardHolder:'',currency:'UZS',prices:DEFAULT_TEMPLATE_PRICES()});
  const available=async()=>{const s=await settings();return /^\d{16,19}$/.test(String(s.cardNumber||''))&&String(s.cardHolder||'').trim().length>=3};
  function limit(key,count=10){const now=Date.now(),a=(hits.get(key)||[]).filter(x=>x>now-60000);a.push(now);hits.set(key,a);if(hits.size>2000)hits.clear();return a.length<=count}
  function buyer(o,token){return !!o && !!token && eq(sha(token),o.customerTokenHash)}
