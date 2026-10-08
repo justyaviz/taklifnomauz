@@ -18,11 +18,12 @@ function showLogin(){$('app').classList.add('hidden');$('login').classList.remov
 function showApp(user){$('login').classList.add('hidden');$('app').classList.remove('hidden');$('activeUsername').textContent=user||'admin';view('dashboard')}
 function view(name){
  qa('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
- for(const n of ['dashboard','invitations','editor','botSales','settings'])$(n).classList.toggle('hidden',n!==name);
- $('breadcrumbs').textContent='Bosh sahifa / '+({dashboard:'Umumiy',invitations:'Taklifnomalar',editor:'Tahrirlash',botSales:'Telegram savdo',settings:'Sozlamalar'}[name]||name);
+ for(const n of ['dashboard','invitations','editor','botSales','cardSales','settings'])$(n).classList.toggle('hidden',n!==name);
+ $('breadcrumbs').textContent='Bosh sahifa / '+({dashboard:'Umumiy',invitations:'Taklifnomalar',editor:'Tahrirlash',botSales:'Telegram savdo',cardSales:'Karta buyurtmalari',settings:'Sozlamalar'}[name]||name);
  window.scrollTo({top:0,behavior:'instant'});
  if(name==='dashboard'||name==='invitations')refresh().catch(e=>notify(e.message,true));
  if(name==='botSales')refreshBotSales().catch(e=>notify(e.message,true));
+ if(name==='cardSales')refreshCardSales().catch(e=>notify(e.message,true));
 }
 function publicUrl(inv){return location.origin+'/i/'+encodeURIComponent(inv.slug)}
 function formatDay(date){try{return new Date(date+'T12:00:00Z').toLocaleDateString('uz-UZ',{day:'numeric',month:'short',year:'numeric'})}catch{return date}}
@@ -202,6 +203,22 @@ async function refreshBotSales(){
  $('botOrdersTable').innerHTML='<table><thead><tr><th>Buyurtma</th><th>Xaridor</th><th>Shablon</th><th>Stars</th><th>Holat</th><th>Havola</th></tr></thead><tbody>'+orders.orders.map(o=>'<tr><td>'+esc(o.id.slice(0,8))+'</td><td>'+esc([o.groom,o.bride].filter(Boolean).join(' & ')||o.chatId)+'</td><td>'+esc(o.template)+'</td><td>'+Number(o.stars||0)+' ⭐</td><td>'+esc(statuses[o.status]||o.status)+'</td><td>'+(o.slug&&o.status==='ready'?'<a href="/i/'+encodeURIComponent(o.slug)+'" target="_blank" rel="noopener noreferrer" style="color:#8c6d38">Ochish ↗</a>':'—')+'</td></tr>').join('')+'</tbody></table>';
 }
 
+async function refreshCardSales(){
+ const [settings,orders]=await Promise.all([api('/api/admin/card/settings'),api('/api/admin/card/orders')]);
+ const f=$('cardSettingsForm'),cfg=settings.settings||{};
+ f.elements.namedItem('cardNumber').value=cfg.cardNumber||'';
+ f.elements.namedItem('cardHolder').value=cfg.cardHolder||'';
+ for(const id of ['oq-saroy','zarhal','minimal'])f.elements.namedItem(id).value=cfg.prices?.[id]??0;
+ $('cardOrderCount').textContent=(orders.total||0)+' buyurtma';
+ if(!orders.orders?.length){$('cardOrdersTable').innerHTML='<div class="empty">Hali karta buyurtmalari yo‘q</div>';return}
+ const statuses={awaiting_receipt:'🧾 Chek kutilmoqda',review:'⌛ Bank tekshiruvi',approved:'✅ Tasdiqlangan',rejected:'❌ Rad etilgan'};
+ $('cardOrdersTable').innerHTML='<table><thead><tr><th>Buyurtma</th><th>Mijoz</th><th>Shablon</th><th>Summa</th><th>Holat</th><th>Tekshirish</th></tr></thead><tbody>'+orders.orders.map(o=>{
+  const buttons=o.receipt?'<a class="btn small" target="_blank" rel="noopener" href="/api/admin/card/receipts/'+encodeURIComponent(o.id)+'">🧾 Chek</a>':'—';
+  const actions=o.status==='review'?'<button class="btn small" data-card-action="approved" data-id="'+esc(o.id)+'">✓ Tasdiqlash</button><button class="btn small danger" data-card-action="rejected" data-id="'+esc(o.id)+'">× Rad etish</button>':'';
+  return '<tr><td>'+esc(o.id.slice(0,8))+'</td><td><b>'+esc(o.customerName)+'</b><br><small>'+esc(o.contact)+'</small></td><td>'+esc(o.template)+'</td><td>'+Number(o.amount||0).toLocaleString('uz-UZ')+' so‘m</td><td>'+esc(statuses[o.status]||o.status)+'</td><td><div class="actions">'+buttons+actions+'</div></td></tr>';
+ }).join('')+'</tbody></table>';
+}
+
 function wire(){
  $('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginError').textContent='';const submit=q('button[type=submit]',$('loginForm'));submit.disabled=true;try{const r=await api('/api/admin/login',{method:'POST',body:{username:$('loginUser').value,password:$('loginPass').value}});showApp(r.username)}catch(err){$('loginError').textContent=err.message}finally{submit.disabled=false}});
  qa('button[data-view]').forEach(b=>b.addEventListener('click',()=>view(b.dataset.view)));
@@ -233,6 +250,19 @@ function wire(){
  for(const box of ['allList','recentList'])$(box).addEventListener('click',e=>{const b=e.target.closest('[data-invite-action]');if(!b)return;const inv=state.invitations.find(i=>i.id===b.dataset.id);if(!inv)return;if(b.dataset.inviteAction==='edit')openEditor(inv);if(b.dataset.inviteAction==='copy')copy(publicUrl(inv));if(b.dataset.inviteAction==='duplicate')duplicate(inv)});
  $('refreshBotSales').addEventListener('click',()=>refreshBotSales().catch(e=>notify(e.message,true)));
  $('botPricesForm').addEventListener('submit',async e=>{e.preventDefault();const prices={};for(const id of ['oq-saroy','zarhal','minimal'])prices[id]=Number($('botPricesForm').elements.namedItem(id).value);try{await api('/api/admin/bot/prices',{method:'PUT',body:{prices}});notify('Shablonlar narxi saqlandi');await refreshBotSales()}catch(e){notify(e.message,true)}});
+ $('refreshCardOrders').addEventListener('click',()=>refreshCardSales().catch(e=>notify(e.message,true)));
+ $('cardSettingsForm').addEventListener('submit',async e=>{
+  e.preventDefault();const f=e.currentTarget;
+  const data={cardNumber:f.elements.namedItem('cardNumber').value,cardHolder:f.elements.namedItem('cardHolder').value,prices:{}};
+  for(const id of ['oq-saroy','zarhal','minimal'])data.prices[id]=Number(f.elements.namedItem(id).value);
+  try{await api('/api/admin/card/settings',{method:'PUT',body:data});notify('Karta ma’lumotlari va narxlar saqlandi');await refreshCardSales()}catch(e){notify(e.message,true)}
+ });
+ $('cardOrdersTable').addEventListener('click',async e=>{
+  const button=e.target.closest('[data-card-action]');if(!button)return;
+  if(!confirm(button.dataset.cardAction==='approved'?'Bank hisobiga pul tushganini tekshirdingizmi? Buyurtmani tasdiqlaysizmi?':'Chekni rad etasizmi?'))return;
+  button.disabled=true;
+  try{await api('/api/admin/card/orders/'+button.dataset.id,{method:'PATCH',body:{status:button.dataset.cardAction}});notify('Buyurtma holati yangilandi');await refreshCardSales()}catch(e){notify(e.message,true)}finally{button.disabled=false}
+ });
  $('passwordForm').addEventListener('submit',async e=>{e.preventDefault();try{await api('/api/admin/password',{method:'POST',body:{oldPassword:$('oldPassword').value,newPassword:$('newPassword').value}});notify('Parol yangilandi. Qayta kiring');showLogin()}catch(e){notify(e.message,true)}});
  $('logoutBtn').addEventListener('click',async()=>{try{await api('/api/admin/logout',{method:'POST',body:{}})}catch{}showLogin()});
 }
