@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { createAdminService } from './admin-service.mjs';
 import { createTelegramService } from './telegram-bot.mjs';
+import { createCheckoutService } from './checkout-service.mjs';
 import { createReadStream, existsSync } from 'node:fs';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { randomBytes, randomUUID, createHash, timingSafeEqual } from 'node:crypto';
@@ -13,6 +14,7 @@ const dataDir = process.env.DATA_DIR || path.join(root, 'storage');
 const wishesFile = path.join(dataDir, 'wishes.json');
 const port = Number(process.env.PORT || 3000);
 const adminService = createAdminService({ dataDir, publicDir });
+const checkoutService = createCheckoutService({dataDir,publicDir});
 const telegramService = createTelegramService({dataDir,baseUrl:process.env.PUBLIC_BASE_URL||'https://oq-saroy-web-production.up.railway.app'});
 const mime = {'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.json':'application/json','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.svg':'image/svg+xml'};
 const samples = [
@@ -66,6 +68,7 @@ const server=createServer(async (req,res)=>{
    const url=new URL(req.url,'http://localhost');
    if(url.pathname==='/health')return reply(res,200,{ok:true});
    if(await telegramService.webhook(req,res,url))return;
+   if(await checkoutService.handle(req,res,url))return;
    if(await adminService.handle(req,res,url))return;
    if(url.pathname.startsWith('/api/'))return await api(req,res,url);
    if(req.method!=='GET'&&req.method!=='HEAD')return reply(res,405,{error:'Method not allowed'});
