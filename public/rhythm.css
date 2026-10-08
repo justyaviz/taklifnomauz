@@ -1,1 +1,64 @@
-.oq-track-label{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);color:#e7cd8e;font-size:12px;letter-spacing:.08em;z-index:4;pointer-events:none}.oq-track-label strong{font-weight:700}.oq-song-progress{position:absolute;bottom:0;left:10px;right:10px;height:4px;background:#ffffff33;overflow:hidden;border-radius:5px;z-index:4}.oq-song-progress span{display:block;width:100%;height:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,#b9944b,#fae7ad)}.oq-notes{position:fixed;inset:0;pointer-events:none;z-index:20;overflow:hidden}.oq-floating-note{position:absolute;color:#f4d891;text-shadow:0 0 14px #f9e9b0;animation:oq-note-float 1.7s ease-out forwards}.oq-orbit-glow{position:absolute;width:55%;aspect-ratio:1;top:30%;left:50%;transform:translate(-50%,-50%);pointer-events:none;border-radius:50%;background:radial-gradient(circle,#fce4ab77,transparent 65%);opacity:.13;z-index:1}@keyframes oq-note-float{0%{transform:translate(0,0) scale(.65);opacity:0}15%{opacity:.85}100%{transform:translate(var(--oq-drift),calc(-1 * var(--oq-rise))) scale(1.2);opacity:0}}@media(prefers-reduced-motion:reduce){.oq-floating-note{display:none}}
+/* OQ SAROY FESTIVAL — vivid but performance-budgeted musical visual layer */
+.mobile{position:relative;isolation:isolate}
+.oq-festival-effects,.oq-notes{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.oq-festival-effects{z-index:42;opacity:1}
+.oq-notes{z-index:45}
+.oq-stage-light{position:absolute;top:-18vh;width:min(82vw,440px);height:112vh;transform-origin:50% 0%;opacity:0;filter:blur(6px);mix-blend-mode:screen;clip-path:polygon(50% 0,10% 100%,90% 100%);background:linear-gradient(180deg,rgba(255,237,162,.55) 0%,rgba(234,184,72,.20) 55%,transparent 100%)}
+.oq-stage-light-a{left:3%;transform:rotate(-24deg)}
+.oq-stage-light-b{right:3%;transform:rotate(24deg)}
+.mobile.oq-is-playing ~ .oq-festival-effects .oq-stage-light-a{opacity:.32;animation:oq-spot-left 6.6s ease-in-out infinite alternate}
+.mobile.oq-is-playing ~ .oq-festival-effects .oq-stage-light-b{opacity:.32;animation:oq-spot-right 7.7s ease-in-out infinite alternate}
+.oq-impact{position:absolute;inset:0;opacity:0;mix-blend-mode:screen;background:radial-gradient(ellipse at 50% 40%,rgba(255,250,207,.33) 0%,rgba(253,215,125,.19) 21%,transparent 64%)}
+.oq-screen-flare{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 42%,rgba(255,246,206,.24),rgba(255,219,137,.07) 29%,transparent 64%);animation:oq-flare .62s ease-out forwards;mix-blend-mode:screen}
+.oq-confetti-layer{position:absolute;inset:0;overflow:hidden}
+.oq-confetti{position:absolute;display:block;border-radius:1px;opacity:0;box-shadow:0 0 9px rgba(255,236,163,.55);animation:oq-confetti-flight var(--oq-dur,1350ms) cubic-bezier(.14,.44,.25,1) forwards;will-change:transform,opacity}
+.oq-floating-note{position:absolute;color:#fce7b2;font-family:Georgia,serif;text-shadow:0 0 10px #d7a945,0 0 28px rgba(239,201,95,.66);animation:oq-note-flight 1700ms ease-out forwards;will-change:transform,opacity}
+.oq-ring-layer{position:absolute;inset:0;pointer-events:none;z-index:2;overflow:hidden}
+.oq-shockwave{position:absolute;left:50%;top:40%;width:145px;height:145px;margin-left:-72.5px;margin-top:-72.5px;border-radius:50%;border:2px solid rgba(255,244,196,.85);outline:1px solid rgba(184,139,53,.4);box-shadow:0 0 26px rgba(255,229,152,.65),inset 0 0 24px rgba(255,240,192,.36);animation:oq-shock 1050ms ease-out forwards;will-change:transform,opacity}
+.oq-track-label{position:absolute;bottom:83px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;min-width:max-content;padding:9px 15px;border-radius:999px;border:1px solid rgba(255,231,168,.38);background:rgba(25,30,46,.74);color:#fff5d4;backdrop-filter:blur(12px);box-shadow:0 9px 34px rgba(0,0,0,.24),0 0 24px rgba(224,177,67,.19);z-index:5;pointer-events:none;opacity:0;transition:opacity .5s,transform .5s}
+.mobile.oq-is-playing .oq-track-label{opacity:1;transform:translate(-50%,-3px)}
+.oq-track-label strong{display:block;font:700 10px/1.5 Montserrat,Arial,sans-serif;letter-spacing:.17em}
+.oq-track-label small{display:block;font:13px/1.4 Georgia,serif;white-space:nowrap}
+.oq-equalizer{height:24px;display:flex;align-items:center;gap:3px}
+.oq-equalizer i{width:3px;height:14px;background:#f9dda0;border-radius:6px;animation:oq-eq .69s ease-in-out infinite alternate}
+.oq-equalizer i:nth-child(2){animation-delay:-.38s;height:22px}
+.oq-equalizer i:nth-child(3){animation-delay:-.16s;height:10px}
+.oq-equalizer i:nth-child(4){animation-delay:-.52s;height:18px}
+.oq-equalizer i:nth-child(5){animation-delay:-.24s;height:13px}
+.oq-song-progress{position:absolute;bottom:0;left:12px;right:12px;height:5px;z-index:5;background:rgba(37,36,35,.23);border-radius:40px;overflow:hidden}
+.oq-song-progress span{height:100%;width:100%;display:block;transform:scaleX(0);transform-origin:left center;background:linear-gradient(90deg,#b78436,#f7d477,#fff8cb);box-shadow:0 0 12px rgba(250,221,143,.85)}
+/* Cinematic golden curtains open when the guest taps the introduction. */
+.oq-intro-curtains{position:absolute;inset:0;z-index:1;pointer-events:none;display:flex;overflow:hidden}
+.oq-intro-curtains i{width:50.1%;height:100%;display:block;background:linear-gradient(90deg,#10182a 0%,#27304b 48%,#182037 84%,#6c5734 100%);box-shadow:inset -2px 0 18px rgba(227,185,98,.25);transform:translateX(0)}
+.oq-intro-curtains i:nth-child(2){transform:translateX(0);background:linear-gradient(90deg,#6c5734,#182037 17%,#27304b 53%,#10182a);box-shadow:inset 2px 0 18px rgba(227,185,98,.25)}
+.intro .intro-label{z-index:3}
+.intro:not(.running) .oq-intro-curtains{opacity:0}
+.intro.running .oq-intro-curtains{opacity:.88;animation:oq-curtain-fade 2.8s ease both}
+.intro.running .oq-intro-curtains i:first-child{animation:oq-curtain-left 2.6s cubic-bezier(.3,.7,.24,1) forwards}
+.intro.running .oq-intro-curtains i:last-child{animation:oq-curtain-right 2.6s cubic-bezier(.3,.7,.24,1) forwards}
+/* Much larger scroll reveals, staged gold accents and typography. */
+.with-motion .reveal:not(.visible){opacity:.12;transform:translateY(52px) scale(.965)}
+.with-motion .reveal{transition:opacity .85s ease,transform 1.05s cubic-bezier(.15,.7,.2,1)}
+.with-motion .reveal.visible{opacity:1;transform:none}
+.with-motion .reveal.visible .art{animation:oq-decoration-entrance 1.25s cubic-bezier(.13,.75,.22,1) both}
+.with-motion .reveal.visible h2{animation:oq-heading-entrance 1.1s ease-out both}
+.with-motion .reveal.visible .rule{animation:oq-rule-show 1.2s ease-out both}
+.mobile[data-oq-phase="drop"] .section h2,.mobile[data-oq-phase="finale"] .section h2{text-shadow:0 0 24px rgba(255,236,151,.4)}
+.mobile[data-oq-phase="drop"] .hero .names{filter:drop-shadow(0 0 15px rgba(255,224,136,.24))}
+.mobile.oq-is-playing .hero:before{animation:oq-ambient-shift 5s ease-in-out infinite alternate}
+@keyframes oq-spot-left{0%{transform:rotate(-38deg)}50%{transform:rotate(6deg)}100%{transform:rotate(-18deg)}}
+@keyframes oq-spot-right{0%{transform:rotate(35deg)}50%{transform:rotate(-8deg)}100%{transform:rotate(24deg)}}
+@keyframes oq-shock{0%{opacity:.9;transform:scale(.55)}100%{opacity:0;transform:scale(3.2)}}
+@keyframes oq-flare{0%{opacity:0}25%{opacity:.85}100%{opacity:0}}
+@keyframes oq-note-flight{0%{opacity:0;transform:translate3d(0,0,0) scale(.6)}16%{opacity:.9}100%{opacity:0;transform:translate3d(var(--oq-drift),calc(-1 * var(--oq-rise)),0) scale(1.5) rotate(22deg)}}
+@keyframes oq-confetti-flight{0%{opacity:0;transform:translate3d(0,0,0) rotate(0)}12%{opacity:1}45%{transform:translate3d(var(--oq-x),var(--oq-y),0) rotate(calc(var(--oq-rot) * .5));opacity:1}100%{transform:translate3d(calc(var(--oq-x) * 1.35),160px,0) rotate(var(--oq-rot));opacity:0}}
+@keyframes oq-eq{0%{transform:scaleY(.36)}100%{transform:scaleY(1.08)}}
+@keyframes oq-curtain-left{0%,12%{transform:translateX(0)}100%{transform:translateX(-110%)}}
+@keyframes oq-curtain-right{0%,12%{transform:translateX(0)}100%{transform:translateX(110%)}}
+@keyframes oq-curtain-fade{0%{opacity:.9}64%{opacity:.86}100%{opacity:0}}
+@keyframes oq-decoration-entrance{0%{opacity:0;transform:translateY(30px) scale(.78) rotate(-8deg);filter:blur(8px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes oq-heading-entrance{0%{opacity:0;transform:translateY(18px) scale(.92);filter:blur(5px)}100%{opacity:1;transform:none;filter:none}}
+@keyframes oq-rule-show{0%{opacity:0;transform:scaleX(.3)}100%{opacity:1;transform:scaleX(1)}}
+@keyframes oq-ambient-shift{0%{opacity:.42}100%{opacity:1}}
+@media(max-width:600px){.oq-stage-light{width:70vw;filter:blur(9px)}.oq-track-label{bottom:79px;padding:8px 12px;gap:7px}.oq-track-label small{font-size:12px}.oq-shockwave{width:120px;height:120px;margin-left:-60px;margin-top:-60px}}
+@media(prefers-reduced-motion:reduce){.oq-festival-effects,.oq-notes,.oq-ring-layer,.oq-intro-curtains{display:none!important}.oq-equalizer i,.mobile.oq-is-playing .hero:before{animation:none!important}.with-motion .reveal:not(.visible){opacity:1!important;transform:none!important}.with-motion .reveal.visible .art,.with-motion .reveal.visible h2,.with-motion .reveal.visible .rule{animation:none!important}.oq-track-label{transition:none}}
