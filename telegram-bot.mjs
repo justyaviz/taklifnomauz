@@ -46,9 +46,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
  function url(template){return publicBase+'/t/'+template}
  function pricesLabel(id){const p=pricesByTemplate[id];return p?p+' ⭐ Stars':'Narx kiritilmagan'}
  const catalogButtons=(prices)=>BOT_TEMPLATES.map(t=>[{text:t.emoji+' '+t.title+(prices[t.id]?' · '+prices[t.id]+' ⭐':''),callback_data:'view:'+t.id}]).concat([[{text:'⬅️ Bosh menyu',callback_data:'home'}]]);
- async function welcome(chat){await say(chat,'💌 TAKLIFLY — elektron taklifnomalar!\n\nShablonlarni ko‘ring, xarid qilingan taklifnomani to‘ldiring va mehmonlarga yuboring.
-
-Mustaqil saytdan berilgan aktivlashtirish kodini /redeem KOD shaklida yuborishingiz mumkin.',menu.inline_keyboard)}
+ async function welcome(chat){await say(chat,'💌 TAKLIFLY — elektron taklifnomalar!\n\nShablonlarni ko‘ring, xarid qilingan taklifnomani to‘ldiring va mehmonlarga yuboring.\n\nMustaqil saytdan berilgan aktivlashtirish kodini /redeem KOD shaklida yuborishingiz mumkin.',menu.inline_keyboard)}
  async function catalog(chat){await say(chat,'🎨 Elektron taklifnoma shablonlari\n\nNamunani ochib ko‘ring, keyin o‘zingizga yoqqanini tanlang.',catalogButtons(await currentPrices()))}
  async function showTemplate(chat,id){
   const t=BOT_TEMPLATES.find(x=>x.id===id);if(!t)return catalog(chat);
