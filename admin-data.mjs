@@ -1,4 +1,5 @@
 import {mkdir,readFile,writeFile,rename} from 'node:fs/promises';
+import {mkdirSync,existsSync,writeFileSync} from 'node:fs';
 import path from 'node:path';
 import {randomUUID} from 'node:crypto';
 export const err=(status,message)=>Object.assign(new Error(message),{httpStatus:status});
@@ -40,6 +41,12 @@ export function normalize(d,existing){
  o.updatedAt=new Date().toISOString();return o;
 }
 export function storage(root){
+ // Persist the starter invitation exactly once, including its stable ID.
+ const initial=path.join(root,'invitations.json');
+ if(!existsSync(initial)){
+  mkdirSync(root,{recursive:true});
+  try{writeFileSync(initial,JSON.stringify([starter()]),{flag:'wx'})}catch(e){if(e.code!=='EEXIST')throw e}
+ }
  let locked=Promise.resolve();
  async function read(name,def=[]){try{return JSON.parse(await readFile(path.join(root,name),'utf8'))}catch(e){if(e.code==='ENOENT')return typeof def==='function'?def():def;throw e}}
  async function write(name,value){await mkdir(root,{recursive:true});const target=path.join(root,name),tmp=target+'.'+randomUUID()+'.tmp';await writeFile(tmp,JSON.stringify(value));await rename(tmp,target)}
