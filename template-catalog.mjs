@@ -5,6 +5,7 @@ export const TEMPLATE_CATALOG=Object.freeze([
  {id:'festival',title:'FESTIVAL',emoji:'🎊',subtitle:'Ritmli bayram va konfetti',description:'Musiqa ritmidagi yorqin pulse, sahna chiroqlari va konfetti.'},
  {id:'elegant',title:'ELEGANT',emoji:'🌷',subtitle:'Atirgul va mayin pushti ranglar',description:'Yumshoq romantik taklifnoma, gul motivlari.'},
  {id:'modern',title:'MODERN',emoji:'🪩',subtitle:'Zamonaviy ko‘k-binafsha neon',description:'Minimal tipografika, gradientlar va dinamik geometriya.'},
+ {id:'ulugbek-muslima',title:'ULUG‘BEK & MUSLIMA',emoji:'💌',subtitle:'Sinalgan asl to‘y taklifnomasi — UZ / RU',description:'Ulug‘bek va Muslima uchun tayyorlangan haqiqiy taklifnoma namunasi: ismlar, sana, til almashtirish va musiqali animatsiya.'},
  {id:'oq-saroy',title:'OQ SAROY',emoji:'🏰',subtitle:'Asl saroy shabloni',description:'Saroy, oltin bezak va musiqali kirish animatsiyasi.'},
  {id:'zarhal',title:'ZARHAL',emoji:'✨',subtitle:'Yorqin oltin va to‘q pushti',description:'Oltin va nafis pushti rangdagi tantanali bayram.'},
  {id:'minimal',title:'NAFIS',emoji:'🤍',subtitle:'Oq, soddalik va sokinlik',description:'Oq va bej tusli zamonaviy minimalist shablon.'}
