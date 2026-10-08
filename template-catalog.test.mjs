@@ -31,7 +31,7 @@ test('ten templates, six styles first, original couple plus former three',()=>{
  assert.deepEqual(CARD_CATALOG.map(t=>t.id),TEMPLATE_IDS);
  assert.equal(new Set(TEMPLATE_CATALOG.map(t=>t.title)).size,10);
 });
-test('all nine themes pass invitation validation',()=>{
+test('all ten themes pass invitation validation',()=>{
  for(const id of TEMPLATE_IDS){
   const i=normalize({template:id,slug:'preview-'+id},starter());
   assert.equal(i.template,id);
@@ -70,6 +70,6 @@ test('Telegram bot catalog lists all ten including original couple',async()=>{
  await bot.processUpdate({update_id:956132,callback_query:{id:'q956132',from:{id:123},data:'catalog',message:{chat:{id:123}}}});
  const sent=calls.findLast(x=>x.method==='sendMessage');
  assert.ok(sent);
- const choices=sent.params.reply_markup.inline_keyboard.slice(0,9).flat();
+ const choices=sent.params.reply_markup.inline_keyboard.slice(0,10).flat();
  assert.deepEqual(choices.map(x=>x.callback_data),TEMPLATE_IDS.map(x=>'view:'+x));
 });
