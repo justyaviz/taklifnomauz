@@ -13,7 +13,7 @@ export const starter=()=>({
  googleUrl:'',yandexUrl:'',lead:'Hayotimizdagi eng baxtli kunni Siz — aziz mehmonimiz bilan birga nishonlashni orzu qilamiz.',
  message:'Sizning tashrifingiz bu quvonchli kunimizga alohida fayz va tabaruk baxsh etadi. Kelishingizni intiqlik bilan kutamiz.',
  family:'Kuyov va kelin oilalari',dressCode:'',gallery:[],heroImage:'',backgroundImage:'',
- musicUrl:'https://taklifnoma.imaantech.uz/assets/audio/song4.mp3',audioStart:26,
+ musicUrl:'https://d2ol7oe51mr4n9.cloudfront.net/user_3IlOECcDNYVkvUZvnr4wEMjZLN5/ef3c85d8-13c4-4a46-973d-a0d43e01ec60.mp3',audioStart:26,
  colors:{gold:'#b89246',navy:'#15192a'},schedule:[
   {time:'17:00',title:'Mehmonlarni kutib olish'},{time:'18:00',title:'Nikoh marosimi'},
   {time:'19:00',title:'Ziyofat boshlanishi'},{time:'20:00',title:'Milliy taomlar'},{time:'21:00',title:'Raqs va davra'}
