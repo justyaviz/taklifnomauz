@@ -45,7 +45,7 @@ function fadeAudio(){
  const start=performance.now(),maxVolume=.75,duration=3000;
  const step=(t)=>{
    if(!s.playing||!audioEl)return;
-   audioEl.volume=maxVolume*Math.min(1,(t-start)/duration);
+   audioEl.volume=maxVolume*Math.min(1,Math.max(0,(t-start)/duration));
    if(t-start<duration)fadeFrame=requestAnimationFrame(step);
  };
  audioEl.volume=0;
