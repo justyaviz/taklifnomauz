@@ -142,6 +142,59 @@ export function createAdminService({dataDir,publicDir}){
    const name=randomUUID()+'.'+(ext==='jpeg'?'jpg':ext);await mkdir(uploaded,{recursive:true});await writeFile(path.join(uploaded,name),bin,{flag:'wx'});
    return reply(res,201,{url:'/media/'+name,name,bytes:bin.length}),true;
   }
+  // Manual bank-transfer checkout is for TAKLIFLY's independent website, NOT Telegram bot purchases.
+  if(p==='/api/admin/card/settings'){
+   if(method==='GET'){
+    const data=await store.read('card-settings.json',{cardNumber:'',cardHolder:'',currency:'UZS',prices:{'oq-saroy':0,zarhal:0,minimal:0}});
+    return reply(res,200,{settings:data}),true;
+   }
+   if(method==='PUT'){
+    const d=await input(req),number=String(d.cardNumber||'').replace(/\s|-/g,''),holder=clean(d.cardHolder,90);
+    if(number&&!/^\d{16,19}$/.test(number))throw err(400,'Qabul qiluvchi karta raqami 16–19 ta raqamdan iborat bo‘lsin');
+    if(holder&&holder.length<3)throw err(400,'Karta egasining ism-familiyasini to‘liq kiriting');
+    const prices={};
+    for(const id of ['oq-saroy','zarhal','minimal']){
+     const val=Number(d.prices?.[id]);
+     if(!Number.isSafeInteger(val)||val<0||val>1_000_000_000)throw err(400,'Narx butun son bo‘lishi kerak');
+     prices[id]=val;
+    }
+    const result={cardNumber:number,cardHolder:holder,currency:'UZS',prices,updatedAt:new Date().toISOString()};
+    await store.mutate(()=>store.write('card-settings.json',result));
+    return reply(res,200,{settings:result}),true;
+   }
+   return reply(res,405,{error:'Method not allowed'}),true;
+  }
+  if(p==='/api/admin/card/orders'&&method==='GET'){
+   const items=(await store.read('card-orders.json',[])).slice(-200).reverse().map(({customerTokenHash,...rest})=>rest);
+   return reply(res,200,{orders:items,total:items.length}),true;
+  }
+  const cardOrder=p.match(/^\/api\/admin\/card\/orders\/([a-f0-9-]{36})$/);
+  if(cardOrder&&method==='PATCH'){
+   const d=await input(req),choice=String(d.status||'');
+   if(!['approved','rejected'].includes(choice))throw err(400,'Tasdiqlash yoki rad etishni tanlang');
+   const result=await store.mutate(async()=>{
+    const list=await store.read('card-orders.json',[]),o=list.find(x=>x.id===cardOrder[1]);
+    if(!o)throw err(404,'Buyurtma topilmadi');
+    if(o.status==='approved')throw err(409,'Tasdiqlangan buyurtma qayta o‘zgartirilmaydi');
+    if(o.status!=='review'||!o.receipt)throw err(409,'Avval chek rasmi yuborilishi kerak');
+    o.status=choice;
+    if(choice==='approved')o.claimCode='TKF-'+randomBytes(12).toString('hex').toUpperCase();
+    o.reviewedAt=new Date().toISOString();o.updatedAt=o.reviewedAt;
+    await store.write('card-orders.json',list);
+    return o;
+   });
+   return reply(res,200,{id:result.id,status:result.status}),true;
+  }
+  const receipt=p.match(/^\/api\/admin\/card\/receipts\/([a-f0-9-]{36})$/);
+  if(receipt&&method==='GET'){
+   const o=(await store.read('card-orders.json',[])).find(x=>x.id===receipt[1]);
+   if(!o||!o.receipt||!/^[a-f0-9-]{36}\.(jpg|png|webp)$/.test(o.receipt))return reply(res,404,{error:'Chek topilmadi'}),true;
+   const f=path.join(dataDir,'private-receipts',o.receipt);
+   if(!existsSync(f))return reply(res,404,{error:'Chek mavjud emas'}),true;
+   const mime={jpg:'image/jpeg',png:'image/png',webp:'image/webp'}[path.extname(f).slice(1)];
+   res.writeHead(200,{'Content-Type':mime,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"});
+   createReadStream(f).pipe(res);return true;
+  }
   if(p==='/api/admin/bot/prices'){
    const ids=['oq-saroy','zarhal','minimal'];
    const fallback=String(process.env.TELEGRAM_PRICES_STARS||'').split(',').map(Number);
