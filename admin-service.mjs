@@ -37,9 +37,11 @@ export function createAdminService({dataDir,publicDir}){
   }
   const page=p.match(/^\/i\/([a-z0-9-]{3,60})\/?$/);
   if(page){
-   const inv=await findPublished(page[1]);if(!inv)return reply(res,404,{error:'Taklifnoma topilmadi yoki nashr qilinmagan'}),true;
+   let inv=await findPublished(page[1]);
+   if(!inv&&url.searchParams.get('preview')==='1'&&await auth(req))inv=(await store.invites()).find(x=>x.slug===page[1]);
+   if(!inv)return reply(res,404,{error:'Taklifnoma topilmadi yoki nashr qilinmagan'}),true;
    if(method!=='GET'&&method!=='HEAD')return reply(res,405,{error:'Method not allowed'}),true;
-   if(method==='GET')await store.mutate(async()=>{const all=await store.invites(),item=all.find(x=>x.id===inv.id);if(item){item.views=(item.views||0)+1;await store.write('invitations.json',all)}});
+   if(method==='GET'&&url.searchParams.get('preview')!=='1')await store.mutate(async()=>{const all=await store.invites(),item=all.find(x=>x.id===inv.id);if(item){item.views=(item.views||0)+1;await store.write('invitations.json',all)}});
    let html=await readFile(path.join(publicDir,'index.html'),'utf8');
    const inject='<script id="invite-data" type="application/json">'+jsonSafe(inv)+'</script><script defer src="/app.js"></script>';
    html=html.replace('<script defer src="/app.js"></script>',inject);
