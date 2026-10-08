@@ -15,7 +15,10 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
  const pricesByTemplate=Object.fromEntries(BOT_TEMPLATES.map((t,i)=>[t.id,Number.isSafeInteger(confPrices[i])&&confPrices[i]>0&&confPrices[i]<=100000?confPrices[i]:0]));
  const currentPrices=async()=>{
   const fromAdmin=await store.read('bot-prices.json',{});
-  return Object.fromEntries(BOT_TEMPLATES.map(t=>[t.id,Number.isSafeInteger(fromAdmin[t.id])&&fromAdmin[t.id]>=0&&fromAdmin[t.id]<=100000?fromAdmin[t.id]:0]));
+  return Object.fromEntries(BOT_TEMPLATES.map(t=>{
+   const value=fromAdmin[t.id]===undefined?pricesByTemplate[t.id]:fromAdmin[t.id];
+   return [t.id,Number.isSafeInteger(value)&&value>=0&&value<=100000?value:0];
+  }));
  };
  const publicBase=baseUrl.replace(/\/$/,'');
  const configured=!!botToken && !!webhookSecret && /^[A-Za-z0-9_-]{16,256}$/.test(webhookSecret);
