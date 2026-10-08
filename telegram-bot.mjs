@@ -28,6 +28,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
  const menu={inline_keyboard:[
   [{text:'🎨 Shablonlarni ko‘rish',callback_data:'catalog'}],
   [{text:'📦 Buyurtmalarim',callback_data:'orders'}],
+  [{text:'🔑 Kod bilan faollashtirish',callback_data:'redeem_info'}],
   [{text:'💬 Yordam',callback_data:'support'}]
  ]};
  const options=(buttons)=>({reply_markup:{inline_keyboard:buttons}});
@@ -44,8 +45,10 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
  const owned=(list,user,id)=>list.find(x=>x.id===id&&x.telegramUserId===user);
  function url(template){return publicBase+'/t/'+template}
  function pricesLabel(id){const p=pricesByTemplate[id];return p?p+' ⭐ Stars':'Narx kiritilmagan'}
- const catalogButtons=(prices)=>BOT_TEMPLATES.map(t=>[{text:t.emoji+' '+t.title+' · '+(prices[t.id]?prices[t.id]+' ⭐':'Narx belgilanmagan'),callback_data:'view:'+t.id}]).concat([[{text:'⬅️ Bosh menyu',callback_data:'home'}]]);
- async function welcome(chat){await say(chat,'💌 TAKLIFLY — elektron taklifnomalar!\n\nShablonni tanlang, Telegram Stars orqali to‘lang, ismlar, sana, manzil, musiqa va suratlarni shu botning o‘ziga yuboring. Tayyor taklifnomangizning havolasini olasiz.',menu.inline_keyboard)}
+ const catalogButtons=(prices)=>BOT_TEMPLATES.map(t=>[{text:t.emoji+' '+t.title+(prices[t.id]?' · '+prices[t.id]+' ⭐':''),callback_data:'view:'+t.id}]).concat([[{text:'⬅️ Bosh menyu',callback_data:'home'}]]);
+ async function welcome(chat){await say(chat,'💌 TAKLIFLY — elektron taklifnomalar!\n\nShablonlarni ko‘ring, xarid qilingan taklifnomani to‘ldiring va mehmonlarga yuboring.
+
+Mustaqil saytdan berilgan aktivlashtirish kodini /redeem KOD shaklida yuborishingiz mumkin.',menu.inline_keyboard)}
  async function catalog(chat){await say(chat,'🎨 Elektron taklifnoma shablonlari\n\nNamunani ochib ko‘ring, keyin o‘zingizga yoqqanini tanlang.',catalogButtons(await currentPrices()))}
  async function showTemplate(chat,id){
   const t=BOT_TEMPLATES.find(x=>x.id===id);if(!t)return catalog(chat);
@@ -57,7 +60,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
  }
  async function myOrders(chat,user){
   const mine=(await orders()).filter(o=>o.telegramUserId===user).slice(-8).reverse();
-  if(!mine.length)return say(chat,'Hozircha buyurtmalaringiz yo‘q.',[[{text:'🎨 Shablon tanlash',callback_data:'catalog'}]]);
+  if(!mine.length)return say(chat,'Hozircha buyurtmalaringiz yo‘q. Mustaqil saytdan olingan kodni /redeem KOD orqali faollashtiring.',[[{text:'🎨 Shablonlarni ko‘rish',callback_data:'catalog'}]]);
   const rows=mine.map(o=>[{text:(o.status==='pending_payment'?'⌛ ':o.status==='ready'?'✅ ':'✍️ ')+o.template.toUpperCase()+' · '+o.id.slice(0,8),callback_data:'order:'+o.id}]);
   rows.push([{text:'🎨 Yana shablonlar',callback_data:'catalog'}]);
   return say(chat,'📦 Buyurtmalaringiz:',rows);
@@ -377,6 +380,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
    const user=callback.from.id,chat=callback.message?.chat?.id||user,data=callback.data||'',i=data.indexOf(':'),act=i<0?data:data.slice(0,i),value=i<0?'':data.slice(i+1);
    if(act==='home')return welcome(chat);
    if(act==='catalog')return catalog(chat);
+   if(act==='redeem_info')return say(chat,'🔑 Aktivlashtirish kodi\n\nMustaqil saytdan xarid qilingan va tasdiqlangan taklifnoma kodini quyidagi shaklda yuboring:\n/redeem TKF-...');
    if(act==='support')return say(chat,'💬 Yordam va to‘lov masalalari: /paysupport\nBuyurtmani to‘ldirishni davom ettirish: /orders');
    if(act==='orders')return myOrders(chat,user);
    if(act==='view')return showTemplate(chat,value);
