@@ -9,9 +9,19 @@ const wishesEndpoint=invitation?'/api/invitations/'+encodeURIComponent(invitatio
 const wishStorageKey=invitation?'oq-wish-owners-'+invitationSlug:'oq-wish-owners';
 const guestParam=(new URLSearchParams(location.search).get('guest')||'').trim().slice(0,80);
 function invitationTime(){return invitation?(invitation.eventDate+'T'+invitation.eventTime+':00'+invitation.timezone):'2026-11-21T19:00:00+05:00'}
+const monthNames={
+ uz:['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'],
+ ru:['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь']
+};
 function monthName(lang){
- const d=new Date((invitation?.eventDate||'2026-11-21')+'T12:00:00Z');
- return new Intl.DateTimeFormat(lang==='ru'?'ru-RU':'uz-UZ',{month:'long',year:'numeric',timeZone:'UTC'}).format(d);
+ const [year,month]=(invitation?.eventDate||'2026-11-21').split('-').map(Number);
+ const name=monthNames[lang==='ru'?'ru':'uz'][month-1];
+ return name[0].toUpperCase()+name.slice(1)+', '+year;
+}
+function formatInvitationDate(lang){
+ const [year,month,day]=(invitation?.eventDate||'2026-11-21').split('-').map(Number);
+ const name=monthNames[lang==='ru'?'ru':'uz'][month-1];
+ return day+'-'+(lang==='ru'?name:name[0].toUpperCase()+name.slice(1))+' · '+year;
 }
 function heroMoment(lang){
  const d=new Date((invitation?.eventDate||'2026-11-21')+'T12:00:00Z');
@@ -25,8 +35,7 @@ function applyInvitation(){
  setElement('.names span:last-child',invitation.bride);
  setElement('.end-names',invitation.groom+' va '+invitation.bride);
  document.title=invitation.groom+' & '+invitation.bride+' — Taklifnoma';
- const d=new Date(invitation.eventDate+'T12:00:00Z');
- const dateDisplay=new Intl.DateTimeFormat('uz-UZ',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(d);
+ const dateDisplay=formatInvitationDate('uz');
  setElement('.date-text',dateDisplay);
  setElement('.end-date',dateDisplay);
  setElement('.venue',invitation.venue);
@@ -117,8 +126,7 @@ function setLang(lang){
  $('wishName').placeholder=T('yourNamePlaceholder');$('wishText').placeholder=T('yourWishPlaceholder');
  setMusicButton();document.title=invitation?(invitation.groom+' '+(lang==='ru'?'и':'va')+' '+invitation.bride+' — '+(lang==='ru'?'Приглашение':'Taklifnoma')):(lang==='ru'?'Мухаммад и Амина — приглашение':'Muhammad & Amina — OQ SAROY');
  if(invitation){
-   const dateObj=new Date(invitation.eventDate+'T12:00:00Z');
-   const display=new Intl.DateTimeFormat(lang==='ru'?'ru-RU':'uz-UZ',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(dateObj);
+   const display=formatInvitationDate(lang);
    setElement('.date-text',display);setElement('.end-date',display);
    setElement('.end-names',invitation.groom+' '+(lang==='ru'?'и':'va')+' '+invitation.bride);
  }
