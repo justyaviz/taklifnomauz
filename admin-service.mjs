@@ -153,9 +153,12 @@ export function createAdminService({dataDir,publicDir}){
     const d=await input(req),number=String(d.cardNumber||'').replace(/\s|-/g,''),holder=clean(d.cardHolder,90);
     if(number&&!/^\d{16,19}$/.test(number))throw err(400,'Qabul qiluvchi karta raqami 16–19 ta raqamdan iborat bo‘lsin');
     if(holder&&holder.length<3)throw err(400,'Karta egasining ism-familiyasini to‘liq kiriting');
-    const prices={};
-    for(const id of TEMPLATE_IDS){
-     const val=Number(d.prices?.[id]);
+    const prior=await store.read('card-settings.json',{prices:DEFAULT_TEMPLATE_PRICES()});
+    const prices={...DEFAULT_TEMPLATE_PRICES(),...(prior.prices||{})};
+    if(!d.prices||typeof d.prices!=='object')throw err(400,'Narx ma’lumotlari yo‘q');
+    for(const [id,raw] of Object.entries(d.prices)){
+     if(!TEMPLATE_IDS.includes(id))throw err(400,'Shablon topilmadi');
+     const val=Number(raw);
      if(!Number.isSafeInteger(val)||val<0||val>1_000_000_000)throw err(400,'Narx butun son bo‘lishi kerak');
      prices[id]=val;
     }
@@ -201,14 +204,18 @@ export function createAdminService({dataDir,publicDir}){
    const fallback=String(process.env.TELEGRAM_PRICES_STARS||'').split(',').map(Number);
    const defaults=Object.fromEntries(ids.map((id,i)=>[id,Number.isSafeInteger(fallback[i])&&fallback[i]>0?fallback[i]:0]));
    if(method==='GET'){
-    const fromFile=await store.read('bot-prices.json',{});
-    const safe=Object.fromEntries(ids.map(id=>[id,Number.isSafeInteger(fromFile[id])&&fromFile[id]>=0?fromFile[id]:0]));
+    const fromFile=await store.read('bot-prices.json',null);
+    const visible=fromFile===null?defaults:fromFile;
+    const safe=Object.fromEntries(Object.entries(visible).filter(([id,v])=>ids.includes(id)&&Number.isSafeInteger(v)&&v>=0));
     return reply(res,200,{prices:safe,webhookConfigured:Boolean(process.env.TELEGRAM_BOT_TOKEN&&process.env.TELEGRAM_WEBHOOK_SECRET)}),true;
    }
    if(method==='PUT'){
-    const data=await input(req),result={};
-    for(const id of ids){
-     const value=Number(data?.prices?.[id]);
+    const data=await input(req);
+    if(!data.prices||typeof data.prices!=='object')throw err(400,'Narx ma’lumotlari yo‘q');
+    const result={...await store.read('bot-prices.json',{})};
+    for(const [id,raw] of Object.entries(data.prices)){
+     if(!ids.includes(id))throw err(400,'Shablon topilmadi');
+     const value=Number(raw);
      if(!Number.isSafeInteger(value)||value<0||value>100000)throw err(400,id+' uchun Stars narxi 0–100000 bo‘lsin');
      result[id]=value;
     }
