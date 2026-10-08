@@ -67,7 +67,7 @@ test('receipt is private, requires verification, then issues activation code',as
 });
 test('approved website code activates once and bot sends named guest invitation post',async()=>{
  await bot.processUpdate(msg('/redeem '+claimCode));
- assert.ok(record.some(x=>x.method==='sendMessage'&&x.params.text.includes('faollashtirish')));
+ assert.ok(record.some(x=>x.method==='sendMessage'&&x.params.text.includes('qabul qilindi')));
  await bot.processUpdate(msg('/redeem '+claimCode,81));
  assert.ok(record.findLast(x=>x.method==='sendMessage').params.text.includes('boshqa akkauntga'));
  const orders=await bot.getOrders();const o=orders.find(x=>x.cardOrderId===orderId);
