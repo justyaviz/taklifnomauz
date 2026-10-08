@@ -119,7 +119,7 @@ async function deleteCurrent(){
 function refreshPreview(){
  if(!state.selected)return;
  const iframe=$('previewFrame');
- iframe.src=state.selected.published?publicUrl(state.selected)+'?preview='+Date.now():'about:blank';
+ iframe.src=publicUrl(state.selected)+'?preview=1&ts='+Date.now();
 }
 async function uploadFile(file){
  if(!file)return '';
