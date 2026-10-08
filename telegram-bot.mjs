@@ -2,12 +2,9 @@ import {randomUUID,randomBytes,timingSafeEqual} from 'node:crypto';
 import {mkdir,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {storage,starter,normalize,slugify,clean} from './admin-data.mjs';
+import {TEMPLATE_CATALOG,TEMPLATE_IDS} from './template-catalog.mjs';
 
-export const BOT_TEMPLATES=Object.freeze([
- {id:'oq-saroy',title:'OQ SAROY',emoji:'🏰',description:'Saroy, oltin bezaklar va musiqali kirish animatsiyasi.'},
- {id:'zarhal',title:'ZARHAL',emoji:'✨',description:'Oltin, yorqin bayramona ko‘rinish va ritm effektlari.'},
- {id:'minimal',title:'NAFIS',emoji:'🤍',description:'Soddaroq, oq va nafis zamonaviy taklifnoma.'}
-]);
+export const BOT_TEMPLATES=TEMPLATE_CATALOG;
 const steps=['groom','bride','eventDate','eventTime','venue','address','map','lead','music','gallery','review'];
 const bad=x=>Object.assign(new Error(x),{isUserError:true});
 const validUrl=x=>{try{const v=new URL(x);return v.protocol==='https:'}catch{return false}};
@@ -17,7 +14,7 @@ export function createTelegramService({dataDir,baseUrl='https://oq-saroy-web-pro
  const confPrices=String(prices).split(',').map(x=>Number(x.trim()));
  const pricesByTemplate=Object.fromEntries(BOT_TEMPLATES.map((t,i)=>[t.id,Number.isSafeInteger(confPrices[i])&&confPrices[i]>0&&confPrices[i]<=100000?confPrices[i]:0]));
  const currentPrices=async()=>{
-  const fromAdmin=await store.read('bot-prices.json',pricesByTemplate);
+  const fromAdmin=await store.read('bot-prices.json',{});
   return Object.fromEntries(BOT_TEMPLATES.map(t=>[t.id,Number.isSafeInteger(fromAdmin[t.id])&&fromAdmin[t.id]>=0&&fromAdmin[t.id]<=100000?fromAdmin[t.id]:0]));
  };
  const publicBase=baseUrl.replace(/\/$/,'');
