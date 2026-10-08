@@ -25,7 +25,7 @@ Edit public/index.html for names, address and maps. Edit public/app.js for langu
 Styles and background-image references are in public/styles.css.
 
 ## Media rights
-All application source code is freshly authored. Some decorative pictures and OG preview currently HOTLINK the reference website for design comparison only. The rights to reuse them have not been verified. Replace those links with owned or licensed media before commercial use. Availability of third-party images is not guaranteed.
+All application source code is freshly authored. Some decorative pictures, OG preview and the background audio (`/assets/audio/song4.mp3`, played from 26 seconds) currently HOTLINK the reference website for design comparison only. The rights to reuse them have not been verified. Replace those links with owned or licensed media before commercial use. Availability of third-party images is not guaranteed.
 
 ## Limitations
 Sample couple, date and venue. Guest wishes belong to one invitation only. For a multi-invitation SaaS, add invitation-specific storage, separate access control and moderation.
