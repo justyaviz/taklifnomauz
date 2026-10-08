@@ -154,3 +154,24 @@ body.opened .hero-inside .hero-time{animation:letterAppear 1.3s ease 3.2s both}
 .hero-inside .orn{margin-top:9px}
 .location{min-height:713px;padding-bottom:35px}
 .count-section{min-height:344px;padding-bottom:24px}
+
+
+/* Reference-sequenced entrance: illuminated backdrop and handwritten reveal. */
+body.invitation-locked{overflow:hidden;touch-action:none}
+.intro.running{visibility:visible!important;opacity:1!important;transition:none!important}
+.intro.running .intro-bg,.intro.running .intro-tint,.intro.running .intro-label{transition:none!important}
+.intro.done{opacity:0!important;visibility:hidden!important;pointer-events:none!important;display:none}
+.intro-glow{
+ position:absolute;inset:0;pointer-events:none;opacity:0;
+ background:radial-gradient(ellipse at 50% 28%,rgba(255,238,174,.7) 0%,rgba(255,226,151,.25) 35%,transparent 75%);
+ mix-blend-mode:screen;
+}
+body.opened .hero-inside .eyebrow,
+body.opened .hero-inside .names span,
+body.opened .hero-inside .names em,
+body.opened .hero-inside .orn,
+body.opened .hero-inside .date-text,
+body.opened .hero-inside .hero-time{
+ animation:none!important;transition:none!important;filter:none!important;transform:none!important;
+}
+body.opened .scroll-tip{transition:none!important;animation:none!important}
