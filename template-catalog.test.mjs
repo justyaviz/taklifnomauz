@@ -1,0 +1,75 @@
+import {test,before,after} from 'node:test';
+import assert from 'node:assert/strict';
+import {spawn} from 'node:child_process';
+import {mkdtemp,rm,readFile} from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
+import {TEMPLATE_CATALOG,TEMPLATE_IDS} from './template-catalog.mjs';
+import {normalize,starter} from './admin-data.mjs';
+import {createTelegramService} from './telegram-bot.mjs';
+import {CARD_CATALOG} from './checkout-service.mjs';
+
+let proc,dir,url;
+before(async()=>{
+ dir=await mkdtemp(path.join(os.tmpdir(),'taklifly-nine-'));
+ const port=21000+Math.floor(Math.random()*20000);
+ url='http://127.0.0.1:'+port;
+ proc=spawn(process.execPath,['server.mjs'],{
+  env:{...process.env,PORT:String(port),DATA_DIR:dir,TELEGRAM_BOT_TOKEN:'',TELEGRAM_WEBHOOK_SECRET:''},
+  stdio:'ignore'
+ });
+ let ok=false;
+ for(let i=0;i<100;i++){try{if((await fetch(url+'/health')).ok){ok=true;break}}catch{}await new Promise(r=>setTimeout(r,65))}
+ assert.equal(ok,true);
+});
+after(async()=>{proc?.kill();await rm(dir,{recursive:true,force:true})});
+
+test('nine distinct templates, six first, former three last',()=>{
+ assert.equal(TEMPLATE_IDS.length,9);
+ assert.deepEqual(TEMPLATE_IDS.slice(0,6),['classic','royal','premium','festival','elegant','modern']);
+ assert.deepEqual(TEMPLATE_IDS.slice(6),['oq-saroy','zarhal','minimal']);
+ assert.deepEqual(CARD_CATALOG.map(t=>t.id),TEMPLATE_IDS);
+ assert.equal(new Set(TEMPLATE_CATALOG.map(t=>t.title)).size,9);
+});
+test('all nine themes pass invitation validation',()=>{
+ for(const id of TEMPLATE_IDS){
+  const i=normalize({template:id,slug:'preview-'+id},starter());
+  assert.equal(i.template,id);
+  assert.equal(i.slug,'preview-'+id);
+ }
+ assert.throws(()=>normalize({template:'nonexistent'},starter()));
+});
+test('nine public previews deliver right data, theme CSS and current names',async()=>{
+ const css=await (await fetch(url+'/extra-themes.css')).text();
+ const index=await (await fetch(url+'/t/royal')).text();
+ assert.match(index,/extra-themes\.css/);
+ for(const id of TEMPLATE_IDS){
+  const res=await fetch(url+'/t/'+id);
+  assert.equal(res.status,200,id+' preview HTTP');
+  const html=await res.text();
+  assert.ok(html.includes('"template":"'+id+'"'),id+' data binding');
+  assert.ok(html.includes('Azizbek'),id+' demo name');
+  if(['classic','royal','premium','festival','elegant','modern'].includes(id)){
+   assert.ok(css.includes('body[data-template="'+id+'"] .hero'),id+' hero skin');
+   assert.ok(css.includes('body[data-template="'+id+'"] .section'),id+' independent section');
+  }
+ }
+});
+test('website catalog lists all themes in correct order',async()=>{
+ const response=await fetch(url+'/api/checkout/catalog');
+ assert.equal(response.status,200);
+ const catalog=(await response.json()).templates;
+ assert.deepEqual(catalog.map(x=>x.id),TEMPLATE_IDS);
+ assert.equal(catalog.every(x=>x.price===0),true);
+});
+test('Telegram bot catalog lists all nine before legacy three',async()=>{
+ const calls=[],bot=createTelegramService({
+  dataDir:dir,baseUrl:url,botToken:'test-token',webhookSecret:'a_valid_secret_code_for_local_tests',
+  transport:async(method,params)=>{calls.push({method,params});return true}
+ });
+ await bot.processUpdate({update_id:956132,callback_query:{id:'q956132',from:{id:123},data:'catalog',message:{chat:{id:123}}}});
+ const sent=calls.findLast(x=>x.method==='sendMessage');
+ assert.ok(sent);
+ const choices=sent.params.reply_markup.inline_keyboard.slice(0,9).flat();
+ assert.deepEqual(choices.map(x=>x.callback_data),TEMPLATE_IDS.map(x=>'view:'+x));
+});
