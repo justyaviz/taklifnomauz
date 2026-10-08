@@ -24,12 +24,12 @@ before(async()=>{
 });
 after(async()=>{proc?.kill();await rm(dir,{recursive:true,force:true})});
 
-test('nine distinct templates, six first, former three last',()=>{
- assert.equal(TEMPLATE_IDS.length,9);
+test('ten templates, six styles first, original couple plus former three',()=>{
+ assert.equal(TEMPLATE_IDS.length,10);
  assert.deepEqual(TEMPLATE_IDS.slice(0,6),['classic','royal','premium','festival','elegant','modern']);
- assert.deepEqual(TEMPLATE_IDS.slice(6),['oq-saroy','zarhal','minimal']);
+ assert.deepEqual(TEMPLATE_IDS.slice(6),['ulugbek-muslima','oq-saroy','zarhal','minimal']);
  assert.deepEqual(CARD_CATALOG.map(t=>t.id),TEMPLATE_IDS);
- assert.equal(new Set(TEMPLATE_CATALOG.map(t=>t.title)).size,9);
+ assert.equal(new Set(TEMPLATE_CATALOG.map(t=>t.title)).size,10);
 });
 test('all nine themes pass invitation validation',()=>{
  for(const id of TEMPLATE_IDS){
@@ -39,7 +39,7 @@ test('all nine themes pass invitation validation',()=>{
  }
  assert.throws(()=>normalize({template:'nonexistent'},starter()));
 });
-test('nine public previews deliver right data, theme CSS and current names',async()=>{
+test('ten public previews deliver right data, theme CSS and couple names',async()=>{
  const css=await (await fetch(url+'/extra-themes.css')).text();
  const index=await (await fetch(url+'/t/royal')).text();
  assert.match(index,/extra-themes\.css/);
@@ -48,21 +48,21 @@ test('nine public previews deliver right data, theme CSS and current names',asyn
   assert.equal(res.status,200,id+' preview HTTP');
   const html=await res.text();
   assert.ok(html.includes('"template":"'+id+'"'),id+' data binding');
-  assert.ok(html.includes('Azizbek'),id+' demo name');
+  assert.ok(html.includes(id==='ulugbek-muslima'?"Ulug":"Azizbek"),id+' demo name');
   if(['classic','royal','premium','festival','elegant','modern'].includes(id)){
    assert.ok(css.includes('body[data-template="'+id+'"] .hero'),id+' hero skin');
    assert.ok(css.includes('body[data-template="'+id+'"] .section'),id+' independent section');
   }
  }
 });
-test('website catalog lists all themes in correct order',async()=>{
+test('website catalog lists ten themes in correct order',async()=>{
  const response=await fetch(url+'/api/checkout/catalog');
  assert.equal(response.status,200);
  const catalog=(await response.json()).templates;
  assert.deepEqual(catalog.map(x=>x.id),TEMPLATE_IDS);
  assert.equal(catalog.every(x=>x.price===0),true);
 });
-test('Telegram bot catalog lists all nine before legacy three',async()=>{
+test('Telegram bot catalog lists all ten including original couple',async()=>{
  const calls=[],bot=createTelegramService({
   dataDir:dir,baseUrl:url,botToken:'test-token',webhookSecret:'a_valid_secret_code_for_local_tests',
   transport:async(method,params)=>{calls.push({method,params});return true}
