@@ -20,7 +20,7 @@
 <label>Taklifnoma nomi<input name="title" maxlength="100" required placeholder="Masalan: Muhammad & Amina"></label>
 <label>Unikal havola (slug)<input name="slug" maxlength="60" required pattern="[a-z0-9-]{3,60}" placeholder="muhammad-amina"></label>
 <label>Kuyov ismi<input name="groom" maxlength="80" required></label><label>Kelin ismi<input name="bride" maxlength="80" required></label>
-<label>Shablon uslubi<select name="template"><option value="oq-saroy">🏰 OQ SAROY</option><option value="zarhal">✨ ZARHAL</option><option value="minimal">🤍 NAFIS</option></select></label><label>Marosim turi<input name="eventType" maxlength="100" placeholder="Nikoh to‘yi"></label>
+<label>Shablon uslubi<select name="template"><option value="classic">🕯️ CLASSIC</option><option value="royal">👑 ROYAL</option><option value="premium">💎 PREMIUM GOLD</option><option value="festival">🎊 FESTIVAL</option><option value="elegant">🌷 ELEGANT</option><option value="modern">🪩 MODERN</option><option value="oq-saroy">🏰 OQ SAROY</option><option value="zarhal">✨ ZARHAL</option><option value="minimal">🤍 NAFIS</option></select></label><label>Marosim turi<input name="eventType" maxlength="100" placeholder="Nikoh to‘yi"></label>
 <label>To‘y sanasi<input type="date" name="eventDate" required></label>
 <label>Boshlanish vaqti<input type="time" name="eventTime" required></label>
 <label>Vaqt zonasi<select name="timezone"><option value="+05:00">O‘zbekiston (UTC+05)</option><option value="+03:00">Turkiya (UTC+03)</option><option value="+04:00">UTC+04</option><option value="+06:00">UTC+06</option><option value="+00:00">UTC+00</option></select></label>
@@ -61,6 +61,12 @@
 <div class="panel" style="margin-top:22px"><p class="section-label">Shablonlar narxlari · Telegram Stars</p>
 <p class="help">0 bo‘lsa xarid tugmasi yashiriladi. Faqat haqiqiy to‘lov tasdiqlangach taklifnoma ochiladi.</p>
 <form id="botPricesForm" class="grid3" style="margin-top:16px">
+<label>🕯️ CLASSIC (⭐)<input type="number" min="0" max="100000" step="1" name="classic" value="0" required></label>
+<label>👑 ROYAL (⭐)<input type="number" min="0" max="100000" step="1" name="royal" value="0" required></label>
+<label>💎 PREMIUM GOLD (⭐)<input type="number" min="0" max="100000" step="1" name="premium" value="0" required></label>
+<label>🎊 FESTIVAL (⭐)<input type="number" min="0" max="100000" step="1" name="festival" value="0" required></label>
+<label>🌷 ELEGANT (⭐)<input type="number" min="0" max="100000" step="1" name="elegant" value="0" required></label>
+<label>🪩 MODERN (⭐)<input type="number" min="0" max="100000" step="1" name="modern" value="0" required></label>
 <label>🏰 OQ SAROY (⭐)<input type="number" min="0" max="100000" step="1" name="oq-saroy" value="0" required></label>
 <label>✨ ZARHAL (⭐)<input type="number" min="0" max="100000" step="1" name="zarhal" value="0" required></label>
 <label>🤍 NAFIS (⭐)<input type="number" min="0" max="100000" step="1" name="minimal" value="0" required></label>
@@ -77,10 +83,16 @@
 <form id="cardSettingsForm" class="inputgroup">
 <div class="grid"><label>To‘lov qabul qiluvchi karta raqami<input name="cardNumber" inputmode="numeric" pattern="[0-9 ]{16,24}" placeholder="8600 0000 0000 0000"></label>
 <label>Karta egasining ism-familiyasi<input name="cardHolder" placeholder="ISM FAMILIYA"></label></div>
-<p class="section-label" style="margin:4px 0">Shablon narxlari (so‘m)</p>
-<div class="grid3"><label>🏰 OQ SAROY<input name="oq-saroy" type="number" min="0" max="1000000000" step="1" required></label>
-<label>✨ ZARHAL<input name="zarhal" type="number" min="0" max="1000000000" step="1" required></label>
-<label>🤍 NAFIS<input name="minimal" type="number" min="0" max="1000000000" step="1" required></label></div>
+<p class="section-label" style="margin:4px 0">Shablon narxlari (so‘m)</p><div class="grid3">
+<label>🕯️ CLASSIC<input type="number" min="0" max="1000000000" step="1" name="classic" required></label>
+<label>👑 ROYAL<input type="number" min="0" max="1000000000" step="1" name="royal" required></label>
+<label>💎 PREMIUM GOLD<input type="number" min="0" max="1000000000" step="1" name="premium" required></label>
+<label>🎊 FESTIVAL<input type="number" min="0" max="1000000000" step="1" name="festival" required></label>
+<label>🌷 ELEGANT<input type="number" min="0" max="1000000000" step="1" name="elegant" required></label>
+<label>🪩 MODERN<input type="number" min="0" max="1000000000" step="1" name="modern" required></label>
+<label>🏰 OQ SAROY<input type="number" min="0" max="1000000000" step="1" name="oq-saroy" required></label>
+<label>✨ ZARHAL<input type="number" min="0" max="1000000000" step="1" name="zarhal" required></label>
+<label>🤍 NAFIS<input type="number" min="0" max="1000000000" step="1" name="minimal" required></label></div>
 <div class="between"><span class="help">0 so‘m — veb-saytda sotuv yopiq.</span><button type="submit" class="btn primary">Rekvizitlar va narxlarni saqlash</button></div></form></div>
 <div class="panel" style="margin-top:20px"><div class="between"><div><p class="section-label">Cheklarni tekshirish</p><p class="subtitle">Chekni ko‘rish bilan cheklanmay, bank hisobiga pul tushganini albatta tekshiring.</p></div><span id="cardOrderCount" class="tag draft">0 buyurtma</span></div><div id="cardOrdersTable" class="tbl" style="margin-top:16px"></div></div>
 </div>
