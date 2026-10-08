@@ -39,13 +39,12 @@ export function createAdminService({dataDir,publicDir}){
   const templatePreview=p.match(/^\/t\/([a-z0-9-]{3,60})\/?$/);
   const page=p.match(/^\/i\/([a-z0-9-]{3,60})\/?$/);
   if(page||(templatePreview&&TEMPLATE_IDS.includes(templatePreview[1]))){
-   // The Ulugbek–Muslima catalog demo mirrors the existing published invitation
-   // without mutating the original, collecting RSVP/wishes, or incrementing its views.
-   const historical=templatePreview?.[1]==='ulugbek-muslima'
-    ? await findPublished('ulugbek-muslima') : null;
-   const example=historical||{...starter(),groom:"Ulug'bek",bride:'Muslima',eventDate:'2026-10-23',eventTime:'17:00',venue:'Oilaviy uyimizda',address:'',mapQuery:'',googleUrl:'',yandexUrl:''};
-   const demo=templatePreview?.[1]==='ulugbek-muslima'?example:{...starter(),groom:'Azizbek',bride:'Malika',eventDate:'2027-06-12',eventTime:'18:00',venue:'Oq Saroy tantanalar zali'};
-   let inv=templatePreview?{...demo,id:'demo',slug:'demo',template:templatePreview[1],published:true,allowRsvp:false,allowWishes:false,views:0}:await findPublished(page[1]);
+   // Each template preview uses safe demo data; never repurpose a real customer's invitation.
+   const original=templatePreview?.[1]==='oq-saroy-original';
+   const demo=original
+    ? {...starter(),musicUrl:'https://taklifnoma.imaantech.uz/assets/audio/song4.mp3',audioStart:26}
+    : {...starter(),groom:'Azizbek',bride:'Malika',eventDate:'2027-06-12',eventTime:'18:00',venue:'Oq Saroy tantanalar zali'};
+   let inv=templatePreview?{...demo,id:'demo',slug:'demo',template:templatePreview[1],published:true,allowRsvp:false,allowWishes:original,previewDemo:original,views:0}:await findPublished(page[1]);
    if(!inv&&url.searchParams.get('preview')==='1'&&await auth(req))inv=(await store.invites()).find(x=>x.slug===page[1]);
    if(!inv)return reply(res,404,{error:'Taklifnoma topilmadi yoki nashr qilinmagan'}),true;
    if(method!=='GET'&&method!=='HEAD')return reply(res,405,{error:'Method not allowed'}),true;
