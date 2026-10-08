@@ -194,7 +194,7 @@ async function exportCollection(kind){
 
 async function refreshBotSales(){
  const [pricing,orders]=await Promise.all([api('/api/admin/bot/prices'),api('/api/admin/bot/orders')]);
- for(const id of ['oq-saroy','zarhal','minimal'])$('botPricesForm').elements.namedItem(id).value=pricing.prices?.[id]??0;
+ for(const id of ['classic','royal','premium','festival','elegant','modern','oq-saroy','zarhal','minimal'])$('botPricesForm').elements.namedItem(id).value=pricing.prices?.[id]??0;
  $('botConnection').className='tag'+(pricing.webhookConfigured?'':' draft');
  $('botConnection').textContent=pricing.webhookConfigured?'● Bot sozlangan':'○ Bot token hali ulanmagan';
  $('botOrdersCount').textContent=(orders.total||0)+' ta';
@@ -208,7 +208,7 @@ async function refreshCardSales(){
  const f=$('cardSettingsForm'),cfg=settings.settings||{};
  f.elements.namedItem('cardNumber').value=cfg.cardNumber||'';
  f.elements.namedItem('cardHolder').value=cfg.cardHolder||'';
- for(const id of ['oq-saroy','zarhal','minimal'])f.elements.namedItem(id).value=cfg.prices?.[id]??0;
+ for(const id of ['classic','royal','premium','festival','elegant','modern','oq-saroy','zarhal','minimal'])f.elements.namedItem(id).value=cfg.prices?.[id]??0;
  $('cardOrderCount').textContent=(orders.total||0)+' buyurtma';
  if(!orders.orders?.length){$('cardOrdersTable').innerHTML='<div class="empty">Hali karta buyurtmalari yo‘q</div>';return}
  const statuses={awaiting_receipt:'🧾 Chek kutilmoqda',review:'⌛ Bank tekshiruvi',approved:'✅ Tasdiqlangan',rejected:'❌ Rad etilgan'};
@@ -249,12 +249,12 @@ function wire(){
  for(const box of ['guestList','wishesList'])$(box).addEventListener('click',e=>handleRecord(e.target).catch(x=>notify(x.message,true)));
  for(const box of ['allList','recentList'])$(box).addEventListener('click',e=>{const b=e.target.closest('[data-invite-action]');if(!b)return;const inv=state.invitations.find(i=>i.id===b.dataset.id);if(!inv)return;if(b.dataset.inviteAction==='edit')openEditor(inv);if(b.dataset.inviteAction==='copy')copy(publicUrl(inv));if(b.dataset.inviteAction==='duplicate')duplicate(inv)});
  $('refreshBotSales').addEventListener('click',()=>refreshBotSales().catch(e=>notify(e.message,true)));
- $('botPricesForm').addEventListener('submit',async e=>{e.preventDefault();const prices={};for(const id of ['oq-saroy','zarhal','minimal'])prices[id]=Number($('botPricesForm').elements.namedItem(id).value);try{await api('/api/admin/bot/prices',{method:'PUT',body:{prices}});notify('Shablonlar narxi saqlandi');await refreshBotSales()}catch(e){notify(e.message,true)}});
+ $('botPricesForm').addEventListener('submit',async e=>{e.preventDefault();const prices={};for(const id of ['classic','royal','premium','festival','elegant','modern','oq-saroy','zarhal','minimal'])prices[id]=Number($('botPricesForm').elements.namedItem(id).value);try{await api('/api/admin/bot/prices',{method:'PUT',body:{prices}});notify('Shablonlar narxi saqlandi');await refreshBotSales()}catch(e){notify(e.message,true)}});
  $('refreshCardOrders').addEventListener('click',()=>refreshCardSales().catch(e=>notify(e.message,true)));
  $('cardSettingsForm').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.currentTarget;
   const data={cardNumber:f.elements.namedItem('cardNumber').value,cardHolder:f.elements.namedItem('cardHolder').value,prices:{}};
-  for(const id of ['oq-saroy','zarhal','minimal'])data.prices[id]=Number(f.elements.namedItem(id).value);
+  for(const id of ['classic','royal','premium','festival','elegant','modern','oq-saroy','zarhal','minimal'])data.prices[id]=Number(f.elements.namedItem(id).value);
   try{await api('/api/admin/card/settings',{method:'PUT',body:data});notify('Karta ma’lumotlari va narxlar saqlandi');await refreshCardSales()}catch(e){notify(e.message,true)}
  });
  $('cardOrdersTable').addEventListener('click',async e=>{
