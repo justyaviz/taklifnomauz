@@ -12,7 +12,7 @@ export const starter=()=>({
  venue:'"Navro‘z" to‘yxonasi',address:'Toshkent sh., Yakkasaroy tumani',mapQuery:'Navroz toyxonasi Toshkent Yakkasaroy',
  googleUrl:'',yandexUrl:'',lead:'Hayotimizdagi eng baxtli kunni Siz — aziz mehmonimiz bilan birga nishonlashni orzu qilamiz.',
  message:'Sizning tashrifingiz bu quvonchli kunimizga alohida fayz va tabaruk baxsh etadi. Kelishingizni intiqlik bilan kutamiz.',
- family:'Kuyov va kelin oilalari',dressCode:'',gallery:[],heroImage:'',backgroundImage:'',
+ family:'Kuyov va kelin oilalari',dressCode:'',template:'oq-saroy',gallery:[],heroImage:'',backgroundImage:'',
  musicUrl:'https://d2ol7oe51mr4n9.cloudfront.net/user_3IlOECcDNYVkvUZvnr4wEMjZLN5/ef3c85d8-13c4-4a46-973d-a0d43e01ec60.mp3',audioStart:26,
  colors:{gold:'#b89246',navy:'#15192a'},schedule:[
   {time:'17:00',title:'Mehmonlarni kutib olish'},{time:'18:00',title:'Nikoh marosimi'},
@@ -25,6 +25,7 @@ export function normalize(d,existing){
  for(const [key,max] of Object.entries({title:100,groom:80,bride:80,eventDate:10,eventTime:5,timezone:6,eventType:100,venue:150,address:300,mapQuery:300,googleUrl:1500,yandexUrl:1500,lead:1000,message:1500,family:120,dressCode:250,heroImage:1500,backgroundImage:1500,musicUrl:1500})){
   if(key in d)o[key]=clean(d[key],max)
  }
+ if('template' in d){if(!['oq-saroy','zarhal','minimal'].includes(String(d.template)))throw err(400,'Shablon noto‘g‘ri');o.template=String(d.template)}
  if('slug' in d){o.slug=slugify(d.slug);if(o.slug.length<3)throw err(400,'Havola nomi kamida 3 belgi bo‘lsin')}
  for(const k of ['published','allowWishes','allowRsvp'])if(k in d)o[k]=Boolean(d[k]);
  if('audioStart' in d)o.audioStart=Math.min(3600,Math.max(0,Number(d.audioStart)||0));
@@ -40,7 +41,10 @@ export function normalize(d,existing){
  if(!o.groom||!o.bride||!o.venue)throw err(400,'Ismlar va joy nomi majburiy');
  o.updatedAt=new Date().toISOString();return o;
 }
+const sharedStores=new Map();
 export function storage(root){
+ root=path.resolve(root);
+ if(sharedStores.has(root))return sharedStores.get(root);
  // Persist the starter invitation exactly once, including its stable ID.
  const initial=path.join(root,'invitations.json');
  if(!existsSync(initial)){
@@ -51,5 +55,7 @@ export function storage(root){
  async function read(name,def=[]){try{return JSON.parse(await readFile(path.join(root,name),'utf8'))}catch(e){if(e.code==='ENOENT')return typeof def==='function'?def():def;throw e}}
  async function write(name,value){await mkdir(root,{recursive:true});const target=path.join(root,name),tmp=target+'.'+randomUUID()+'.tmp';await writeFile(tmp,JSON.stringify(value));await rename(tmp,target)}
  function mutate(fn){const promise=locked.then(fn);locked=promise.catch(()=>{});return promise}
- return {read,write,mutate,invites:()=>read('invitations.json',()=>[starter()])};
+ const out={read,write,mutate,invites:()=>read('invitations.json',()=>[starter()])};
+ sharedStores.set(root,out);
+ return out;
 }
