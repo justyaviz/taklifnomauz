@@ -11,7 +11,7 @@ function setLang(lang){
  document.querySelectorAll('[data-t]').forEach(el=>{el.textContent=T(el.dataset.t)});
  $('langUz').classList.toggle('selected',lang==='uz');$('langRu').classList.toggle('selected',lang==='ru');
  $('wishName').placeholder=T('yourNamePlaceholder');$('wishText').placeholder=T('yourWishPlaceholder');
- document.title=lang==='ru'?'Мухаммад и Амина — приглашение':'Muhammad & Amina — OQ SAROY';
+ setMusicButton();document.title=lang==='ru'?'Мухаммад и Амина — приглашение':'Muhammad & Amina — OQ SAROY';
  document.querySelector('meta[name="description"]').content=lang==='ru'?'Свадебное приглашение — 21 ноября 2026 года, Ташкент':'Muhammad va Amina nikoh to‘yiga taklifnoma · 21-noyabr, 2026-yil';
  calendar();renderWishes();
 }
@@ -27,17 +27,44 @@ function tick(){
  const nums={days:Math.floor(sec/86400),hours:Math.floor(sec%86400/3600),minutes:Math.floor(sec%3600/60),seconds:sec%60};
  Object.entries(nums).forEach(([k,n])=>{$(k).textContent=String(n).padStart(2,'0')});
 }
-// Musical notes are generated in-browser, so no third-party audio file or audio license is needed.
-let ctx=null,loop=null;
-const melody=[[392,0],[440,.43],[523.25,.86],[659.26,1.29],[587.33,1.72],[523.25,2.15],[440,2.58],[392,3.02],[349.23,3.46],[392,3.90],[440,4.34],[523.25,4.78]];
-function playPhrase(){
- if(!s.playing||!ctx)return;const base=ctx.currentTime+.12;
- for(const [freq,delay] of melody){const osc=ctx.createOscillator(),gain=ctx.createGain();osc.type='sine';osc.frequency.value=freq;gain.gain.setValueAtTime(.0001,base+delay);gain.gain.exponentialRampToValueAtTime(.045,base+delay+.04);gain.gain.exponentialRampToValueAtTime(.0001,base+delay+.55);osc.connect(gain).connect(ctx.destination);osc.start(base+delay);osc.stop(base+delay+.56)}
- loop=setTimeout(playPhrase,5700);
+// Reference demo uses song4.mp3 starting at the 26-second mark.
+// This URL is a remote media dependency, not a copied audio file.
+// Replace with an owned/licensed recording before commercial publication.
+const SOURCE_AUDIO='https://taklifnoma.imaantech.uz/assets/audio/song4.mp3';
+const AUDIO_OFFSET=26;
+let audioEl=null, audioReady=false;
+function setMusicButton(){
+ const button=$('musicButton');
+ button.classList.toggle('playing',s.playing);
+ button.setAttribute('aria-pressed',String(s.playing));
+ button.setAttribute('aria-label',s.playing?(s.lang==='ru'?'Выключить музыку':'Musiqani o‘chirish'):(s.lang==='ru'?'Включить музыку':'Musiqani yoqish'));
 }
 async function music(on){
- const button=$('musicButton');if(on){try{ctx=ctx||new(window.AudioContext||window.webkitAudioContext)();await ctx.resume();s.playing=true;clearTimeout(loop);playPhrase()}catch{s.playing=false}}else{s.playing=false;clearTimeout(loop);if(ctx)await ctx.suspend()}
- button.classList.toggle('playing',s.playing);button.setAttribute('aria-pressed',String(s.playing));button.textContent=s.playing?'♫':'♬';
+ if(!on){
+   s.playing=false;
+   if(audioEl)audioEl.pause();
+   setMusicButton();
+   return;
+ }
+ if(!audioEl){
+   audioEl=new Audio(SOURCE_AUDIO);
+   audioEl.preload='auto';
+   audioEl.loop=true;
+   audioEl.volume=0.8;
+   audioEl.addEventListener('loadedmetadata',()=>{
+     if(!audioReady){try{audioEl.currentTime=AUDIO_OFFSET}catch{}audioReady=true}
+   },{once:true});
+   audioEl.addEventListener('ended',()=>{try{audioEl.currentTime=AUDIO_OFFSET}catch{}if(s.playing)audioEl.play().catch(()=>{})});
+ }
+ s.playing=true;setMusicButton();
+ try{
+   if(audioEl.readyState>=1 && !audioReady){audioEl.currentTime=AUDIO_OFFSET;audioReady=true}
+   await audioEl.play();
+   // On metadata-ready devices the first instant starts at the requested offset.
+   if(audioEl.currentTime<2 && audioEl.readyState>=1){audioEl.currentTime=AUDIO_OFFSET;audioReady=true}
+ }catch{
+   s.playing=false;setMusicButton();
+ }
 }
 function openInvitation(){if(s.opened)return;s.opened=true;$('intro').classList.add('off');document.body.classList.add('opened');music(true)}
 function el(tag,cls,value){const e=document.createElement(tag);if(cls)e.className=cls;if(value!==undefined)e.textContent=value;return e}
