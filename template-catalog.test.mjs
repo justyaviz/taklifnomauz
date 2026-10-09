@@ -79,6 +79,6 @@ test('original OQ SAROY is a public, read-only demo with guestbook and exact ref
  assert.equal(response.status,200);
  const html=await response.text();
  for(const marker of ['Muhammad','Amina','2026-11-21','Navro','"template":"oq-saroy-original"','"previewDemo":true','"allowWishes":true'])assert.ok(html.includes(marker),marker);
- assert.match(html,/oq-saroy-original\.css/);
+ assert.match(html,/oq-original-clone\.css/);
  assert.equal((await fetch(url+'/t/ulugbek-muslima')).status,404);
 });
