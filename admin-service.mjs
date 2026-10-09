@@ -49,6 +49,20 @@ export function createAdminService({dataDir,publicDir}){
    if(!inv)return reply(res,404,{error:'Taklifnoma topilmadi yoki nashr qilinmagan'}),true;
    if(method!=='GET'&&method!=='HEAD')return reply(res,405,{error:'Method not allowed'}),true;
    if(method==='GET'&&!templatePreview&&url.searchParams.get('preview')!=='1')await store.mutate(async()=>{const all=await store.invites(),item=all.find(x=>x.id===inv.id);if(item){item.views=(item.views||0)+1;await store.write('invitations.json',all)}});
+   if(inv.template==='oq-saroy-original'){
+    // A completely separate renderer for the reference-layout invitation, used
+    // both for its read-only catalog demo and for paid custom invitations.
+    let exactHtml=await readFile(path.join(publicDir,'oq-original-clone.html'),'utf8');
+    const exactEsc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const exactTitle=inv.groom+' & '+inv.bride;
+    exactHtml=exactHtml.replace('__OQ_INV_JSON__',jsonSafe(inv));
+    exactHtml=exactHtml.replace(/<title>[^<]*<\/title>/,'<title>'+exactEsc(exactTitle)+'</title>');
+    exactHtml=exactHtml.replace(/(<meta property="og:title" content=")[^"]*(")/,(_,a,b)=>a+exactEsc(exactTitle)+b);
+    exactHtml=exactHtml.replace(/(<meta property="og:description" content=")[^"]*(")/,(_,a,b)=>a+exactEsc(exactTitle+' · '+inv.eventDate+' · '+inv.venue)+b);
+    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+    res.end(method==='HEAD'?'':exactHtml);
+    return true;
+   }
    let html=await readFile(path.join(publicDir,'index.html'),'utf8');
    // Render invitation identity on the server, so stale/cached JS cannot show demo names.
    const escaped=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
