@@ -87,8 +87,8 @@ test('OQ SAROY clone uses short, non-blocking mobile introduction and cache-safe
  const res=await fetch(url+'/t/oq-saroy-original');
  assert.equal(res.status,200);
  const html=await res.text();
- assert.match(html,/oq-original-client\\.js\\?v=20261010-2/);
- assert.match(html,/oq-original-clone\\.css\\?v=20261010-2/);
+ assert.ok(html.includes('/oq-original-client.js?v=20261010-2'));
+ assert.ok(html.includes('/oq-original-clone.css?v=20261010-2'));
  const js=await (await fetch(url+'/oq-original-client.js')).text();
  const css=await (await fetch(url+'/oq-original-clone.css')).text();
  assert.equal(js.includes('requestAnimationFrame('),false);
