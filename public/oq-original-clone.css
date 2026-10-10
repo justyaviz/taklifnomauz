@@ -106,13 +106,40 @@ html{scroll-behavior:smooth;overflow-x:hidden}body{margin:0;background:#15192a;c
 .sr-cap .c-orn{margin:0}
 .sr-hint{font:500 10px var(--sans);letter-spacing:.08em;text-transform:uppercase;animation:hintPulse 1.6s infinite}
 @keyframes hintPulse{50%{opacity:.55}}
-.opening-ov.is-opening .sr-cap{opacity:0;transition:opacity .4s}
+/* The overlay is a single composited fade: no main-thread JS paint on every frame. */
+.opening-ov{will-change:opacity;contain:layout style}
+.opening-ov.is-opening{opacity:0;transition:opacity 1.1s ease}
+.sr-dark{transition:opacity 1.05s ease}
+.sr-glow{transition:opacity .8s ease;mix-blend-mode:normal}
+.opening-ov.is-opening .sr-cap{opacity:0;transition:opacity .22s ease}
 .opening-ov.is-done{display:none!important}
 body.saroy-exact:not(.is-opened){overflow:hidden;touch-action:none}
 .pg.hero .eyebrow,.pg.hero #kuyov,.pg.hero .amp,.pg.hero #kelin,.pg.hero .c-orn,.pg.hero #heroDate,.pg.hero .c-sub,.pg.hero .scrolld{opacity:0}
-body.is-opened .pg.hero .eyebrow,body.is-opened .pg.hero #kuyov,body.is-opened .pg.hero .amp,body.is-opened .pg.hero #kelin,body.is-opened .pg.hero .c-orn,body.is-opened .pg.hero #heroDate,body.is-opened .pg.hero .c-sub,body.is-opened .pg.hero .scrolld{will-change:opacity}
+body.is-opened .pg.hero .eyebrow,body.is-opened .pg.hero #kuyov,body.is-opened .pg.hero .amp,body.is-opened .pg.hero #kelin,body.is-opened .pg.hero .c-orn,body.is-opened .pg.hero #heroDate,body.is-opened .pg.hero .c-sub,body.is-opened .pg.hero .scrolld{
+ animation:oqTextEnter .5s ease both;will-change:auto;
+}
+body.is-opened .pg.hero #kuyov{animation-delay:.11s}
+body.is-opened .pg.hero .amp{animation-delay:.2s}
+body.is-opened .pg.hero #kelin{animation-delay:.28s}
+body.is-opened .pg.hero .c-orn{animation-delay:.33s}
+body.is-opened .pg.hero #heroDate{animation-delay:.4s}
+body.is-opened .pg.hero .c-sub{animation-delay:.49s}
+body.is-opened .pg.hero .scrolld{animation-delay:.58s}
+@keyframes oqTextEnter{from{opacity:0;transform:translate3d(0,5px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 .reveal{opacity:0;transform:translateY(15px);transition:opacity .8s ease,transform .8s ease}
 .reveal.is-visible{opacity:1;transform:none}
 @media(max-height:680px){.pg{padding-top:30px;padding-bottom:25px}.pg:not(.hero){height:auto;min-height:90svh}.pg.hero .pg-c{width:31svh}.pg.hero{padding-top:19svh}}
 @media(max-width:359px){.pg{padding-left:8%;padding-right:8%}.pg .title{font-size:20px}.c-names span{font-size:38px}.c-names span#kelin{font-size:46px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal{opacity:1;transform:none;transition:none}.sr-hint,.scrolld .chev{animation:none}}
+@media(prefers-reduced-motion:reduce){
+ html{scroll-behavior:auto}
+ .reveal{opacity:1;transform:none;transition:none}
+ .sr-hint,.scrolld .chev{animation:none}
+ .opening-ov.is-opening{transition:none;opacity:0}
+ .sr-dark,.sr-glow{transition:none}
+ body.is-opened .pg.hero .eyebrow,body.is-opened .pg.hero #kuyov,
+ body.is-opened .pg.hero .amp,body.is-opened .pg.hero #kelin,
+ body.is-opened .pg.hero .c-orn,body.is-opened .pg.hero #heroDate,
+ body.is-opened .pg.hero .c-sub,body.is-opened .pg.hero .scrolld{
+  animation:none;opacity:1;transform:none
+ }
+}
