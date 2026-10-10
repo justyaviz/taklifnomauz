@@ -82,3 +82,20 @@ test('original OQ SAROY is a public, read-only demo with guestbook and exact ref
  assert.match(html,/oq-original-clone\.css/);
  assert.equal((await fetch(url+'/t/ulugbek-muslima')).status,404);
 });
+
+test('OQ SAROY clone uses short, non-blocking mobile introduction and cache-safe assets',async()=>{
+ const res=await fetch(url+'/t/oq-saroy-original');
+ assert.equal(res.status,200);
+ const html=await res.text();
+ assert.match(html,/oq-original-client\\.js\\?v=20261010-2/);
+ assert.match(html,/oq-original-clone\\.css\\?v=20261010-2/);
+ const js=await (await fetch(url+'/oq-original-client.js')).text();
+ const css=await (await fetch(url+'/oq-original-clone.css')).text();
+ assert.equal(js.includes('requestAnimationFrame('),false);
+ assert.equal(js.includes('setTimeout(done,15500)'),false);
+ assert.ok(js.includes("document.body.style.overflowY='auto'"));
+ assert.ok(js.includes("const duration=window.matchMedia"));
+ assert.ok(js.includes("const startMap=()=>"));
+ assert.ok(css.includes('@keyframes oqTextEnter'));
+ assert.ok(css.includes('.opening-ov.is-opening{opacity:0;transition:opacity 1.1s ease}'));
+});
